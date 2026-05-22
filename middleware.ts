@@ -7,7 +7,9 @@ import { NextResponse } from 'next/server';
 const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
-export const runtime = 'experimental-edge';
+
+// Cambiato in 'edge' standard per Next.js 16 + Cloudflare
+export const runtime = 'edge';
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth?.user;
