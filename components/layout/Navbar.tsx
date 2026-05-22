@@ -78,13 +78,13 @@ export const Navbar = ({
             }
         };
         window.addEventListener('resize', handleResize);
-        
+
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
         }
-        
+
         return () => {
             window.removeEventListener('resize', handleResize);
             document.body.style.overflow = 'unset';
@@ -126,14 +126,14 @@ export const Navbar = ({
                     <div className="flex gap-4 items-center">
                         {/* Desktop: LocaleSwitcher + DarkMode a destra */}
                         <div className="hidden md:flex items-center gap-6">
-                          
+
                             <DarkModeToggle />
                         </div>
                         <Button className="hidden md:flex font-josefin text-md h-8" variant="outline" size="xs" href="/book-now" roundness="2xl">{t('bookFloat')}</Button>
-                        
+
                         {/* Mobile: Hamburger Menu a destra */}
-                        <button 
-                            className="md:hidden text-current p-2 focus:outline-none" 
+                        <button
+                            className="md:hidden text-current p-2 focus:outline-none"
                             onClick={() => setIsMobileMenuOpen(true)}
                             aria-label="Open Menu"
                         >
@@ -148,7 +148,7 @@ export const Navbar = ({
                 <div className="flex-1 w-full max-w-full box-border py-3 md:py-4 px-4 md:px-8 flex justify-center md:justify-between items-center bg-custom-celadon text-custom-blue dark:bg-custom-blue dark:text-custom-coconut transition-colors duration-500">
                     <div className="h-full flex items-center shrink-0">
                         <Link href="/" className="h-full flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
-                      <DynamicLogo />
+                            <DynamicLogo />
                         </Link>
                     </div>
 
@@ -173,23 +173,23 @@ export const Navbar = ({
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <>
-                        {/* Rimossa la backdrop nera perché il menu a schermo intero funge lui stesso da overlay glassmorfico */}
-                            
                             {/* Drawer */}
-                            <motion.div 
-                                className="fixed top-0 right-0 h-dvh w-full backdrop-blur-2xl z-[70] md:hidden flex flex-col"
+                            <motion.div
+                                // 1. Sostituito h-dvh con fixed inset-0 per bloccare le dimensioni reali dello schermo
+                                // 2. Aggiunto overflow-hidden sul wrapper principale per evitare rimbalzi strani
+                                className="fixed inset-0 w-full backdrop-blur-2xl z-[70] md:hidden flex flex-col overflow-hidden"
                                 initial={{ x: '100%' }}
                                 animate={{ x: 0 }}
                                 exit={{ x: '100%' }}
-                                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                                transition={{ type: 'spring', damping: 30, stiffness: 250 }} // Molla leggermente più smorzata per evitare artefatti visivi
                             >
-                                {/* Sfondo Glassmorphism (Usa le tue classi!) */}
-                                <div className="absolute inset-0 bg-custom-celadon dark:bg-custom-rosewood opacity-50 -z-10" />
-                                
-                                {/* Drawer Header */}
-                                <div className="flex justify-end p-6">
-                                    <button 
-                                        onClick={() => setIsMobileMenuOpen(false)} 
+                                {/* Sfondo Glassmorphism */}
+                                <div className="absolute inset-0 bg-custom-celadon/50 dark:bg-custom-rosewood/50 -z-10" />
+
+                                {/* Drawer Header - Fisso in alto */}
+                                <div className="flex justify-end p-6 shrink-0">
+                                    <button
+                                        onClick={() => setIsMobileMenuOpen(false)}
                                         className="text-custom-blue dark:text-custom-coconut p-2 focus:outline-none"
                                     >
                                         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,21 +197,31 @@ export const Navbar = ({
                                         </svg>
                                     </button>
                                 </div>
-                                
-                                {/* Drawer Links */}
-                                <div className="flex flex-col items-center justify-center flex-1 gap-10 pb-12">
+
+                                {/* Drawer Links - 3. ABILITATO LO SCROLL INTERNO SE LO SCHERMO È PICCOLO */}
+                                {/* Cambiato justify-center in justify-start con py-8 per evitare che i link escano sopra/sotto sui telefoni corti */}
+                                <div className="flex flex-col items-center justify-start flex-1 gap-8 px-6 pb-12 overflow-y-auto min-h-0 webkit-overflow-scrolling-touch">
                                     {navItems.map((item, idx) => (
                                         <Link
                                             key={idx}
                                             href={item.href}
-                                            className="font-mocha text-2xl tracking-widest hover:opacity-50 transition-opacity text-custom-blue dark:text-custom-coconut"
+                                            className="font-mocha text-2xl tracking-widest hover:opacity-50 transition-opacity text-custom-blue dark:text-custom-coconut shrink-0"
                                             onClick={() => setIsMobileMenuOpen(false)}
                                         >
                                             {t(item.key)}
                                         </Link>
                                     ))}
-                                    <div className="mt-6">
-                                        <Button className="font-josefin text-xl px-10 py-4" variant="outline" size="lg" href="/book-now" roundness="2xl" onClick={() => setIsMobileMenuOpen(false)}>
+
+                                    {/* Contenitore Bottone - shrink-0 assicura che non venga mai schiacciato */}
+                                    <div className="mt-4 pb-6 shrink-0 w-full flex justify-center">
+                                        <Button
+                                            className="font-josefin text-xl px-10 py-4 w-full max-w-[280px] justify-center"
+                                            variant="outline"
+                                            size="lg"
+                                            href="/book-now"
+                                            roundness="2xl"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                        >
                                             {t('bookFloat')}
                                         </Button>
                                     </div>
