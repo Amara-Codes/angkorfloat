@@ -76,7 +76,7 @@ export default async function UserListPage() {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {user.roles.map(role => (
+                {user.roles.map((role: any) => (
                   <div key={role.id} className="px-3 py-1.5 rounded-xl bg-custom-celadon/10 dark:bg-custom-celadon/10 text-custom-blue/60 dark:text-custom-celadon flex items-center gap-2 border border-custom-celadon/20 shadow-sm">
                     <Shield className="h-3 w-3 shrink-0" />
                     <span className="text-[10px] font-black uppercase tracking-tighter">{role.name.replace(/_/g, " ")}</span>

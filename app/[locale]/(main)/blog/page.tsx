@@ -73,7 +73,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
       : null,
     pageTheme: post.pageTheme,
     content: post.content,
-    categories: post.categories.map(c => ({ id: c.id, name: c.name })),
+    categories: post.categories.map((c: any) => ({ id: c.id, name: c.name })),
     author: post.author ? {
       id: post.author.id,
       name: post.author.name,
@@ -85,7 +85,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
     } : null
   }));
 
-  const serializedCategories = categories.map(c => ({
+  const serializedCategories = categories.map((c: any) => ({
     id: c.id,
     name: c.name
   }));

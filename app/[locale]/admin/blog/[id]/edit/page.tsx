@@ -48,7 +48,7 @@ export default async function EditBlogPage({
       <BlogForm
         post={serializedPost as any}
         categories={categories}
-        initialCategoryIds={post?.categories.map(c => c.id) || []}
+        initialCategoryIds={post?.categories.map((c: any) => c.id) || []}
         canPublish={canPublish}
       />
   );
