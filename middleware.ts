@@ -24,8 +24,11 @@ export default auth((req) => {
   const hasLocale = routing.locales.includes(firstSegment as any);
   const locale = hasLocale ? firstSegment : routing.defaultLocale;
 
+  // Check if we have the secret bypass from an internal rewrite
+  const hasBypass = salt ? req.nextUrl.searchParams.get('bypass') === salt : false;
+
   if (!isLoggedIn) {
-    if ((isAdminRoute && !isSecretLoginRoute) || isDirectLoginRoute) {
+    if (((isAdminRoute && !isSecretLoginRoute) || isDirectLoginRoute) && !hasBypass) {
       // CORREZIONE REDIRECT 404: Reindirizziamo al 404 internazionalizzato corretto per l'App Router
       const url = req.nextUrl.clone();
       url.pathname = hasLocale ? `/${locale}/404` : `/${routing.defaultLocale}/404`;
@@ -39,6 +42,9 @@ export default auth((req) => {
       
       const rewriteUrl = req.nextUrl.clone();
       rewriteUrl.pathname = newPath;
+      if (salt) {
+        rewriteUrl.searchParams.set('bypass', salt);
+      }
       return NextResponse.rewrite(rewriteUrl);
     }
   } else {
