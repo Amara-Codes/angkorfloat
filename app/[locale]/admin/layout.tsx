@@ -5,6 +5,8 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import { Metadata } from "next";
 import { getDatabaseSource } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Angkor Float - Admin Panel",
   description: "Angkor Float - Admin Panel - Floating in Siem Reap | Float Therapy for body and mind",
