@@ -8,8 +8,6 @@ import { ThemeProvider } from 'next-themes';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 
-export const runtime = 'edge';
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

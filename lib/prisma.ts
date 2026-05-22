@@ -119,16 +119,16 @@ const prismaClientSingleton = () => {
     return new PrismaClient({ adapter })
   }
 
-  // 2. Sviluppo locale connesso in tempo reale a D1 tramite il tuo proxy custom
-  if (process.env.DEV_REMOTE === 'true') {
-    console.log("🔌 [Prisma] Connected in real-time to REMOTE CLOUDFLARE D1 via Wrangler Proxy");
+  // 2. Produzione su Railway OPPURE Sviluppo locale connesso a D1 via Proxy
+  // Controlliamo se siamo su Railway tramite la variabile standard RAILWAY_ENVIRONMENT o il tuo flag
+  if (process.env.RAILWAY_ENVIRONMENT || process.env.DEV_REMOTE === 'true') {
+    console.log("🔌 [Prisma] Connected to REMOTE CLOUDFLARE D1 via Remote Proxy Client");
     const mockD1 = new RemoteD1Database() as any;
     const adapter = new PrismaD1(mockD1);
     return new PrismaClient({ adapter });
   }
 
   // 3. Sviluppo locale standard (SQLite dev.db) - ISOLATO PER L'EDGE
-  // Questo controllo impedisce a Cloudflare Pages di includere l'engine Node pesante nella build finale
   if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
     console.log("💾 [Prisma] Connected to local SQLite database (dev.db)");
     return new PrismaClient();
@@ -139,7 +139,6 @@ const prismaClientSingleton = () => {
     log: ['error'],
   });
 }
-
 declare global {
   var prisma: undefined | ReturnType<typeof prismaClientSingleton>
 }
@@ -149,9 +148,11 @@ const prisma = globalThis.prisma ?? prismaClientSingleton()
 export const getDatabaseSource = () => {
   const d1 = (process.env as any).angkorfloat_db || (globalThis as any).angkorfloat_db
   if (d1) return "Cloudflare D1 (Production Edge)"
+  if (process.env.RAILWAY_ENVIRONMENT) return "Cloudflare D1 (Railway via Proxy)"
   if (process.env.DEV_REMOTE === 'true') return "Cloudflare D1 (Remote via Proxy)"
   return "Local SQLite (dev.db)"
 }
+
 
 export default prisma
 
