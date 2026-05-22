@@ -159,7 +159,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <SacredGeometryGrid
         title={t('SacredGeometryGrid.title')}
         className="
-        w-full lg:w-3/4 lg:mx-auto pb-32 bg-custom-celadon 
+        w-full lg:px-64 pb-32 bg-custom-celadon 
         dark:bg-linear-to-b dark:from-custom-blue dark:via-custom-blue/80 via-58%  dark:to-custom-blue "
         titleClassName="text-custom-blue dark:text-custom-coconut"
         linesClassName="text-custom-green dark:text-custom-celadon"
