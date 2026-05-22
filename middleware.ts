@@ -7,6 +7,8 @@ import { NextResponse } from 'next/server';
 const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
+
+
 export const runtime = 'experimental-edge';
 
 export default auth((req) => {
@@ -18,29 +20,30 @@ export default auth((req) => {
   const isAdminRoute = pathname.includes("/admin");
   const isDirectLoginRoute = pathname.includes("/login");
 
+  // Estraiamo il locale corrente dalla richiesta o usiamo quello di default
+  const segments = pathname.split('/');
+  const firstSegment = segments[1];
+  const hasLocale = routing.locales.includes(firstSegment as any);
+  const locale = hasLocale ? firstSegment : routing.defaultLocale;
+
   if (!isLoggedIn) {
     if ((isAdminRoute && !isSecretLoginRoute) || isDirectLoginRoute) {
-      // Return 404 for unauthorized access to admin or direct login
-      return NextResponse.rewrite(new URL('/404', req.url));
+      // CORREZIONE REDIRECT 404: Reindirizziamo al 404 internazionalizzato corretto per l'App Router
+      const url = req.nextUrl.clone();
+      url.pathname = hasLocale ? `/${locale}/404` : `/${routing.defaultLocale}/404`;
+      return NextResponse.rewrite(url);
     }
+    
     if (isSecretLoginRoute) {
-      // Modify the request pathname so next-intl processes it as the login page
-      const segments = pathname.split('/');
-      const firstSegment = segments[1];
-      const hasLocale = routing.locales.includes(firstSegment as any);
-      const locale = hasLocale ? firstSegment : routing.defaultLocale;
-      
       let newPath = '/login';
       if (locale !== routing.defaultLocale) {
         newPath = `/${locale}/login`;
       }
       
       req.nextUrl.pathname = newPath;
-      // Then let next-intl handle the rest
       return intlMiddleware(req);
     }
   } else {
-    // Logged in users trying to access login routes should be redirected to dashboard
     if (isSecretLoginRoute || isDirectLoginRoute) {
       const redirectUrl = new URL(req.url);
       redirectUrl.pathname = pathname.replace(`/admin/${salt}`, '/admin').replace('/login', '/admin');
@@ -48,11 +51,10 @@ export default auth((req) => {
     }
   }
 
-  // Normal processing for all other routes
   return intlMiddleware(req);
 });
 
 export const config = {
-  // Match only internationalized pathnames
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
+  // Configurazione del matcher ottimizzata per saltare i file fisici di sistema di Cloudflare
+  matcher: ['/((?!api|_next|_vercel|images|svg|fonts|.*\\..*).*)']
 };

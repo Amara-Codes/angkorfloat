@@ -112,14 +112,14 @@ class RemoteD1Database {
 }
 
 const prismaClientSingleton = () => {
-  // 1. Real Cloudflare Pages production environment
+  // 1. Ambiente reale di produzione su Cloudflare Pages Edge
   const d1 = (process.env as any).angkorfloat_db || (globalThis as any).angkorfloat_db
   if (d1) {
     const adapter = new PrismaD1(d1)
     return new PrismaClient({ adapter })
   }
 
-  // 2. Local development connected DIRECTLY to Remote Cloudflare D1 (via Wrangler proxy)
+  // 2. Sviluppo locale connesso in tempo reale a D1 tramite il tuo proxy custom
   if (process.env.DEV_REMOTE === 'true') {
     console.log("🔌 [Prisma] Connected in real-time to REMOTE CLOUDFLARE D1 via Wrangler Proxy");
     const mockD1 = new RemoteD1Database() as any;
@@ -127,9 +127,17 @@ const prismaClientSingleton = () => {
     return new PrismaClient({ adapter });
   }
 
-  // 3. Standard Local Development (Offline or Synced SQLite dev.db file)
-  console.log("💾 [Prisma] Connected to local SQLite database (dev.db)");
-  return new PrismaClient()
+  // 3. Sviluppo locale standard (SQLite dev.db) - ISOLATO PER L'EDGE
+  // Questo controllo impedisce a Cloudflare Pages di includere l'engine Node pesante nella build finale
+  if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
+    console.log("💾 [Prisma] Connected to local SQLite database (dev.db)");
+    return new PrismaClient();
+  }
+
+  // Fallback di sicurezza se per qualche motivo il binding non risponde sull'Edge
+  return new PrismaClient({
+    log: ['error'],
+  });
 }
 
 declare global {

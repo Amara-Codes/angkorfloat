@@ -9,6 +9,7 @@
     "dev:synced": "npm run db:sync && npm run dev",
     "dev:remote": "cross-env DEV_REMOTE=true next dev",
     "build": "next build",
+    "pages:build": "npx @cloudflare/next-on-pages",
     "start": "next start",
     "lint": "eslint",
     "db:sync": "python prisma/sync_remote_db.py",
@@ -16,7 +17,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1046.0",
-    "@prisma/adapter-d1": "^7.8.0",
+    "@prisma/adapter-d1": "^6.19.3",
     "@prisma/client": "^6.19.3",
     "@svgr/webpack": "^8.1.0",
     "bcryptjs": "^3.0.3",
