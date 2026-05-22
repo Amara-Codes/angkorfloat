@@ -61,7 +61,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   });
 
   // Serialize models to clean client-ready JSON objects
-  const serializedPosts = posts.map(post => ({
+  const serializedPosts = posts.map((post: any) => ({
     id: post.id,
     title: post.title,
     slug: post.slug,

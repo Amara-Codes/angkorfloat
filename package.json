@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:sync": "python prisma/sync_remote_db.py"
+    "db:sync": "python prisma/sync_remote_db.py",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1046.0",
