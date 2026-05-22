@@ -33,13 +33,13 @@ export default auth((req) => {
     }
     
     if (isSecretLoginRoute) {
-      let newPath = '/login';
-      if (locale !== routing.defaultLocale) {
-        newPath = `/${locale}/login`;
-      }
+      const newPath = routing.localePrefix === 'always'
+        ? `/${locale}/login`
+        : (locale === routing.defaultLocale ? '/login' : `/${locale}/login`);
       
-      req.nextUrl.pathname = newPath;
-      return intlMiddleware(req);
+      const rewriteUrl = req.nextUrl.clone();
+      rewriteUrl.pathname = newPath;
+      return NextResponse.rewrite(rewriteUrl);
     }
   } else {
     if (isSecretLoginRoute || isDirectLoginRoute) {
