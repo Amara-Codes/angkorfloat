@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
 const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth?.user;
