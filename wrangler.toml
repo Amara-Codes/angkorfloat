@@ -1,0 +1,8 @@
+name = "float"
+pages_build_output_dir = ".next" 
+
+[[d1_databases]]
+binding = "angkorfloat_db"
+database_name = "angkorfloat-db"
+database_id = "4f6001bd-1246-43be-8fb9-5546acd5de5f"
+remote = true

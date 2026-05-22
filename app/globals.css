@@ -1,0 +1,120 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-Thin.ttf') format('truetype'); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-ThinItalic.ttf') format('truetype'); font-weight: 100; font-style: italic; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-Light.ttf') format('truetype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-LightItalic.ttf') format('truetype'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-Italic.ttf') format('truetype'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-SemiBoldItalic.ttf') format('truetype'); font-weight: 600; font-style: italic; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: Josefin; src: url('/fonts/josefin/JosefinSans-BoldItalic.ttf') format('truetype'); font-weight: 700; font-style: italic; font-display: swap; }
+
+@font-face { font-family: Kugile; src: url('/fonts/kugile/Kugile_Demo.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Mocha; src: url('/fonts/mocha/Mocha-Demo.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Moglan; src: url('/fonts/moglan/Moglan_DEMO.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Primor; src: url('/fonts/primor/PrimorStylish.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+    /* Colors */
+  --color-custom-blue: #2F3C7E;
+  --color-custom-green: #577760;
+  --color-custom-celadon: #e0e0e0;
+  --color-custom-coconut: #ededed;
+  --color-custom-rosewood: #924044;
+  --color-custom-terracotta: #d87a5e;
+  --color-custom-almond: #f9f4e8;
+
+  /* Gradients */
+  --gradient-blue-to-green: linear-gradient(135deg, #2F3C7E 0%, #577760 100%);
+  --gradient-almond-to-rosewood: linear-gradient(135deg, #f9f4e8 0%, #924044 100%);
+  --gradient-terracotta-to-almond: linear-gradient(135deg, #d87a5e 0%, #f9f4e8 100%);
+  --gradient-celadon-to-coconut: linear-gradient(135deg, #e0e0e0 0%, #ededed 100%);
+  --gradient-rosewood-to-blue: linear-gradient(135deg, #924044 0%, #2F3C7E 100%);
+  --gradient-coconut-to-almond: linear-gradient(135deg, #ededed 0%, #f9f4e8 100%);
+  --gradient-almond-to-celadon: linear-gradient(135deg, #f9f4e8 0%, #e0e0e0 100%);
+  --gradient-green-to-coconut: linear-gradient(135deg, #577760 0%, #ededed 100%);
+  --gradient-blue-to-almond: linear-gradient(135deg, #2F3C7E 0%, #f9f4e8 100%);
+  --gradient-rosewood-to-terracotta: linear-gradient(135deg, #924044 0%, #d87a5e 100%);
+
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-josefin: Josefin, sans-serif;
+  --font-kugile: Kugile, sans-serif;
+  --font-mocha: Mocha, sans-serif;
+  --font-moglan: Moglan, sans-serif;
+  --font-primor: Primor, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Scoped Login Autofill Reset */
+.login-autofill-fix input:-webkit-autofill,
+.login-autofill-fix input:-webkit-autofill:hover, 
+.login-autofill-fix input:-webkit-autofill:focus, 
+.login-autofill-fix input:-webkit-autofill:active {
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: #e0e0e0 !important; /* custom-celadon */
+    transition: background-color 5000s ease-in-out 0s !important;
+    font-size: 1.125rem !important;
+    font-weight: 900 !important;
+    font-family: inherit !important;
+}
+
+/* Minimalist scrollbar for custom select component */
+.select-scrollbar::-webkit-scrollbar {
+  width: 1px !important;
+  height: 1px !important;
+}
+
+.select-scrollbar::-webkit-scrollbar-button {
+  display: none !important;
+}
+
+.select-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.select-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(47, 60, 126, 0.6) !important; /* slightly higher contrast for 1px thickness */
+  border-radius: 0 !important;
+}
+
+.select-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(47, 60, 126, 0.9) !important;
+}
+
+/* Dark mode overrides */
+.dark .select-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(224, 224, 224, 0.6) !important;
+}
+
+.dark .select-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(224, 224, 224, 0.9) !important;
+}
+
+
+
+

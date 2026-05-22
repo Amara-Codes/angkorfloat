@@ -1,0 +1,14 @@
+name = "d1-proxy"
+main = "dev-proxy.js"
+compatibility_date = "2026-05-22"
+
+# Associa il worker al tuo dominio personalizzato
+routes = [
+  { pattern = "sync.angkorfloat.com", custom_domain = true }
+]
+
+# Collega il database D1 reale
+[[d1_databases]]
+binding = "angkorfloat_db"
+database_name = "angkorfloat-db"
+database_id = "4f6001bd-1246-43be-8fb9-5546acd5de5f"

@@ -1,0 +1,209 @@
+{
+  "Common": {
+    "home": "Home",
+    "whyFloat": "Why Float",
+    "packagesAndPrices": "Packages",
+    "faq": "FAQ",
+    "healingSessions": "Healing Sessions",
+    "blog": "Blog",
+    "contacts": "Contacts",
+    "bookFloat": "Book a Float",
+    "explore": "Explore",
+    "relaxResetRestore": "Relax. Reset. Restore"
+  },
+  "HomePage": {
+    "title": "Relax. Reset. Restore",
+    "subtitle": "A float sanctuary & wellness center for deep healing and nervous system regulation by the ancient temples of Angkor.",
+    "paragraph": "In addition to 60 and 90 minute float sessions, we offer comprehensive nervous system reset journeys that combine massage, acupuncture, sound healing, breathwork and integration play.\n \n After long days exploring the mysteries of the Angkor temples, this is an invitation to slow down, soften and come home to yourself. ",
+    "buttonLabel": "Explore our Packages",
+    "DisplayGrid": {
+      "title": "Floating & Sound Healing",
+      "items": {
+        "sleep": {
+          "title": "Improved Sleep",
+          "subtitle": "Promotes deep relaxation and\nresets your internal clock."
+        },
+        "bloodpressure": {
+          "title": "Lower Blood Pressure",
+          "subtitle": "Improves cardiovascular health and blood flow"
+        },
+        "stressreduction": {
+          "title": "Stress Reduction",
+          "subtitle": "Lowers cortisol levels for deep relaxation"
+        },
+        "clarity": {
+          "title": "Enhanced Clarity",
+          "subtitle": "Improves cardiovascular health and blood flow"
+        },
+        "jetlag": {
+          "title": "Reduce Jet Lag",
+          "subtitle": "Reset your circadian rhythm and nervous system"
+        },
+        "wellbeing": {
+          "title": "Emotional Wellbeing",
+          "subtitle": "Increases production of endorphins and serotonin"
+        },
+        "recovery": {
+          "title": "Faster Recovery",
+          "subtitle": "Speeds up muscle recovery from exhaustion"
+        },
+        "painrelief": {
+          "title": "Pain Relief",
+          "subtitle": "Alleviates chronic pain, joint & muscle tension. "
+        }
+      }
+    },
+    "ActionCTA": {
+      "title": "Experience Deep Relaxation",
+      "paragraph": "Take a break from the noise of daily life. Nourish your body, heart and mind. Reclaim your peace. ",
+      "button1": "Buy a Gift Card",
+      "button2": "Book a Float"
+    },
+    "SacredGeometryGrid": {
+      "title": "The Team of International Healers",
+      "healer-1": {
+        "name": "Paige Klumb",
+        "subtitle": "Breathwork, Yoga, Sound Healing"
+      },
+      "healer-2": {
+        "name": "Mona Simon",
+        "subtitle": "Energy Healing"
+      },
+      "healer-3": {
+        "name": "Pascal",
+        "subtitle": "Acupuncture"
+      },
+      "healer-4": {
+        "name": "Darren Swallow",
+        "subtitle": "Shamanic Healing"
+      },
+      "healer-5": {
+        "name": "Tingting Pan",
+        "subtitle": "Yoga, Sound Healing"
+      },
+      "healer-6": {
+        "name": "Jennafer XX",
+        "subtitle": "Therapeutic Massage"
+      },
+      "healer-7": {
+        "name": "Rachel Bilski",
+        "subtitle": "Yoga Therapy"
+      },
+      "healer-8": {
+        "name": "Lokta Joel",
+        "subtitle": "Yoga, Meditation, Sound Healing"
+      }
+    },
+    "ProvenResults": {
+      "title": "Scientific Studies",
+      "subtitle": "Proven Results",
+      "infos": [
+        {
+          "title": "“Significant reductions in state anxiety, muscle tension, and pain.”",
+          "subtitle": "Feinstein et al. (2018)"
+        },
+        {
+          "title": "“A safe and effective method for rapidly reducing levels of stress.”",
+          "subtitle": "Khalsa et al. (2020)"
+        },
+        {
+          "title": "“Significant reduction in blood lactate levels and muscle soreness.”",
+          "subtitle": "Morgan et al. (2013)"
+        },
+        {
+          "title": "“Associated with a significant decrease in plasma cortisol levels.”",
+          "subtitle": "Turner & Fine (1983)"
+        },
+        {
+          "title": "“Increased sleep quality and significant reduction in pain intensity.”",
+          "subtitle": "Bood et al. (2006)"
+        },
+        {
+          "title": "“Significant increase in standardized scores of technical creativity.”",
+          "subtitle": "Vartanian & Suedfeld (2011)"
+        }
+      ]
+    }
+  },
+  "ContactPage": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help you on your healing journey. \nReach out to us for bookings or any questions.",
+    "getInTouch": "Get in Touch",
+    "address": {
+      "title": "Address",
+      "value": "700 Sala Kamraeuk Rd, Siem Reap, Cambodia"
+    },
+    "openingHours": {
+      "title": "Opening Hours",
+      "weekdays": "Monday - Friday: 9:00 AM - 9:00 PM",
+      "weekend": "Saturday - Sunday: 10:00 AM - 8:00 PM"
+    },
+    "contact": {
+      "title": "Contact Details",
+      "phone": "+855 12 345 678",
+      "email": "hello@floatsiemreap.com"
+    },
+    "getDirections": "Get Directions",
+    "followOurJourney": "Follow our journey",
+    "googleMapsUrl": "https://www.google.com/maps/dir//Hariharalaya+Yoga+%26+Meditation+Retreat,+Top+Town+Road+Old,+Bakheng+Rd,+Krong+Siem+Reap+17259/@13.4361713,103.8216578,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x31102348c30b281f:0xb54b8ca6d37c90ee!2m2!1d103.8447886!2d13.3656275?entry=ttu&g_ep=EgoyMDI2MDUwNi4wIKXMDSoASAFQAw%3D%3D"
+  },
+  "WhyFloatPage": {
+    "title": "Why Float?",
+    "subtitle": "Discover the science and soul of zero-gravity therapy.",
+    "intro": "Floating is a scientifically proven method for deep physical and mental restoration. By removing external stimuli, your nervous system can finally rest, allowing for profound states of meditation and recovery that are difficult to reach in daily life.",
+    "scientificBasis": "The high concentration of Epsom salts (magnesium sulfate) creates a zero-gravity environment that relieves all pressure on your joints and spine. Meanwhile, the magnesium absorption helps regulate over 300 biochemical reactions in the body, including muscle function and stress management.",
+    "mentalHealth": "The absence of external light and sound allows the brain to transition from its normal alpha and beta waves into deep theta waves—the state usually reserved for experienced meditators and deep sleep. This results in an unprecedented reduction in cortisol levels and a natural boost in dopamine and endorphins.",
+    "physicalRecovery": "Athletes and individuals with chronic pain find floating to be a powerful tool for recovery. The weightless environment increases blood flow to all parts of the body, accelerating the healing of muscle tissues and reducing inflammation, while the high magnesium content helps flush out toxins and lactic acid.",
+    "ctaTitle": "Ready to experience stillness?",
+    "ctaParagraph": "Join us for a session and discover the profound benefits of floating for your mind and body.",
+    "ctaButton": "Book Your Session"
+  },
+  "Footer": {
+    "tagline": "Relax. Reset. Restore",
+    "links": {
+      "whyFloat": "Why Float",
+      "packages": "Packages",
+      "faq": "FAQ",
+      "healing": "Healing Sessions",
+      "blog": "Blog",
+      "contact": "Contacts"
+    },
+    "copyright": "All rights reserved."
+  },
+  "FaqPage": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about our float sanctuary and healing journeys."
+  },
+  "BlogPage": {
+    "title": "Our Blog",
+    "subtitle": "Insights, stories, and science of stillness and nervous system regulation.",
+    "searchPlaceholder": "Search articles...",
+    "filterCategories": "Filter Categories",
+    "sortBy": "Sort By",
+    "noPosts": "No articles found matching these categories.",
+    "readMore": "Read Article",
+    "clearAll": "Clear All",
+    "resultsFound": "{count} articles found",
+    "moreRecentFirst": "Newest First",
+    "olderFirst": "Oldest First",
+    "show": "Show",
+    "articlesPerPage": "articles per page",
+    "prev": "Previous",
+    "next": "Next",
+    "allCategories": "All Categories",
+    "apply": "Apply",
+    "categoriesSelected": "{count} selected",
+    "cancel": "Cancel",
+    "resetFilters": "Reset Filters",
+    "minRead": "{count} min read"
+  },
+  "ComingSoon": {
+    "title": "Stillness is on the Way",
+    "subtitle": "We are preparing a sacred space for your healing journey.",
+    "description": "Our sanctuary in Siem Reap is crafting new experiences to help you relax, reset, and restore. These offerings will be available shortly.",
+    "backHome": "Back to Home",
+    "sessionsTitle": "Healing Sessions",
+    "packagesTitle": "Packages & Prices",
+    "bookNowTitle": "Book a Float"
+  }
+}

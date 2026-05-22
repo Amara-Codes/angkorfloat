@@ -1,0 +1,138 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  name      String?
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  image     Bytes?
+  imageUrl  String?
+  surname   String?
+  biography String?
+  posts     BlogPost[]
+  roles     Role[]     @relation("UserRoles")
+}
+
+model Role {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  permissions Permission[] @relation("RolePermissions")
+  users       User[]       @relation("UserRoles")
+}
+
+model Permission {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  roles     Role[]   @relation("RolePermissions")
+}
+
+model BlogPost {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  thumbnailImage   Bytes?
+  thumbnailUrl     String?
+  thumbnailCaption String?
+  content          String
+  metaTitle        String?
+  metaDescription  String?
+  ogImage          Bytes?
+  ogImageUrl       String?
+  canonicalUrl     String?
+  published        Boolean  @default(false)
+  showAuthor       Boolean  @default(true)
+  authorId         String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  caption          String?
+  keywords         String?
+  ogDescription    String?
+  ogTitle          String?
+  ogType           String?  @default("article")
+  robots           String?
+  pageTheme        String?  @default("blue-coconut")
+  author           User     @relation(fields: [authorId], references: [id])
+  images           Media[]
+  categories       PostCategory[] @relation("PostToCategory")
+}
+
+model Media {
+  id        String   @id @default(cuid())
+  bytes     Bytes?
+  url       String?
+  key       String
+  postId    String
+  createdAt DateTime @default(now())
+  post      BlogPost @relation(fields: [postId], references: [id])
+}
+
+model Therapist {
+  id             String           @id @default(cuid())
+  name           String
+  bio            String
+  specialties    String
+  specialties_kh String?
+  image          Bytes?
+  imageUrl       String?
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  sessions       HealingSession[]
+}
+
+model HealingSession {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  duration    Int
+  price       Float
+  therapistId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  therapist   Therapist @relation(fields: [therapistId], references: [id])
+}
+
+model FloatPackage {
+  id           String   @id @default(cuid())
+  name         String
+  description  String
+  price        Float
+  sessionCount Int
+  validityDays Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Faq {
+  id          String   @id @default(cuid())
+  question    String
+  question_kh String?
+  answer      String
+  answer_kh   String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PostCategory {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  posts     BlogPost[] @relation("PostToCategory")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
