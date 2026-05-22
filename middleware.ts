@@ -10,8 +10,7 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
-  // 1. ANTILOOP: Se la richiesta è già diretta a una pagina di errore 404, 
-  // passiamo il controllo direttamente a next-intl per evitare elaborazioni ridondanti
+  // 1. ANTILOOP PRONTISSIMO: Se siamo già sul 404, non toccare nulla
   if (pathname.includes('/404')) {
     return intlMiddleware(req);
   }
@@ -19,33 +18,29 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth?.user;
   const salt = process.env.ADMIN_LOGIN_ROUTE_SALT;
 
-  // Analisi dei percorsi (gestisce anche i percorsi prefissati dalla lingua come /en/admin)
   const isSecretLoginRoute = salt ? pathname.includes(`/admin/${salt}`) : false;
   const isAdminRoute = pathname.includes("/admin");
   const isDirectLoginRoute = pathname.includes("/login");
 
-  // Estrazione e gestione del locale corretto
+  // Gestione del Locale
   const segments = pathname.split('/');
   const firstSegment = segments[1];
   const hasLocale = routing.locales.includes(firstSegment as any);
   const locale = hasLocale ? firstSegment : routing.defaultLocale;
 
-  // Controllo del parametro di bypass per i passaggi interni (riscritture)
   const hasBypass = salt ? req.nextUrl.searchParams.get('bypass') === salt : false;
 
-  // 2. LOGICA PER UTENTI NON LOGGATI
+  // SCENARIO A: UTENTE NON LOGGATO
   if (!isLoggedIn) {
     
-    // Se tenta di accedere a una rotta admin senza il salt segreto, o alla rotta login diretta senza bypass
+    // Se prova ad andare su /admin pulito o direttamente su /login senza bypass, cacciamolo sul 404
     if (((isAdminRoute && !isSecretLoginRoute) || isDirectLoginRoute) && !hasBypass) {
       const url = req.nextUrl.clone();
-      // Usiamo NextResponse.redirect invece del rewrite: Cloudflare preferisce i redirect espliciti
-      // per le rotte protette, azzerando i loop sui proxy inversi.
       url.pathname = hasLocale ? `/${locale}/404` : `/${routing.defaultLocale}/404`;
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(url); // Redirect esplicito per non confondere Cloudflare
     }
     
-    // Se l'URL corrisponde alla rotta d'accesso segreta con il salt valido
+    // Se usa l'URL SEGRETO con il salt corretto
     if (isSecretLoginRoute) {
       const newPath = routing.localePrefix === 'always'
         ? `/${locale}/login`
@@ -53,35 +48,31 @@ export default auth((req) => {
       
       const rewriteUrl = req.nextUrl.clone();
       rewriteUrl.pathname = newPath;
+      
+      // Iniettiamo il bypass per permettere a NextAuth e a next-intl di leggerlo internamente
       if (salt) {
         rewriteUrl.searchParams.set('bypass', salt);
       }
-      return NextResponse.rewrite(rewriteUrl);
+      return NextResponse.rewrite(rewriteUrl); // Rewrite: l'URL nella barra rimane quello con il salt!
     }
 
-  // 3. LOGICA PER UTENTI LOGGATI
+  // SCENARIO B: UTENTE GIÀ LOGGATO
   } else {
-    
-    // Se l'utente è già autenticato ma tenta di rientrare dal salt o dal login manuale
+    // Se è loggato e prova a tornare sulla rotta segreta o su /login, mandalo alla dashboard pulita
     if (isSecretLoginRoute || isDirectLoginRoute) {
       const redirectUrl = req.nextUrl.clone();
       const cleanAdminPath = `/admin`;
       
-      // Costruiamo l'URL di destinazione finale includendo il locale per evitare un secondo redirect da next-intl
       redirectUrl.pathname = hasLocale ? `/${firstSegment}${cleanAdminPath}` : `/${locale}${cleanAdminPath}`;
-      
-      // Eliminiamo il parametro di bypass per ripulire la barra degli indirizzi dell'amministratore
       redirectUrl.searchParams.delete('bypass');
       
       return NextResponse.redirect(redirectUrl);
     }
   }
 
-  // 4. Se la richiesta non soddisfa nessuna delle condizioni precedenti, la affidiamo a next-intl
   return intlMiddleware(req);
 });
 
 export const config = {
-  // Il matcher esclude i file statici, asset e i nodi interni di sistema di Vercel/Cloudflare
   matcher: ['/((?!api|_next|_vercel|images|svg|fonts|.*\\..*).*)']
 };
