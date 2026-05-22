@@ -7,6 +7,7 @@ import ActionCTA from '@/components/common/ActionCTA';
 import { HorizontalScrollSection, ScrollItem } from '@/components/common/HorizontalScrollSection';
 import { SacredGeometryElement, SacredGeometryGrid } from '@/components/SacredGeometryGrid';
 import prisma from "@/lib/prisma";
+import { Key } from 'react';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -64,13 +65,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
 
   const healers = dbTherapists.length > 0
-    ? dbTherapists.map((therapist, i) => {
+    ? dbTherapists.map((therapist: { name: string; specialties_kh: string | null; specialties: string; imageUrl: string | null; image: any; id: string; }, i: number) => {
       const title = therapist.name;
       const subtitle = locale === 'kh' && therapist.specialties_kh ? therapist.specialties_kh : therapist.specialties;
       const img = therapist.imageUrl
         ? therapist.imageUrl
         : therapist.image
-          ? `data:image/jpeg;base64,${Buffer.from(therapist.image as any).toString('base64')}`
+          ? `data:image/jpeg;base64,${Buffer.from(therapist.image).toString('base64')}`
           : `/images/sacred-geometry/img-home-${(i % 8) + 1}.webp`;
       return {
         id: therapist.id,
@@ -170,7 +171,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         karmaAlignment={.3}   // 1 = Poligono perfetto, 0 = Nodi disordinati
         karmaFactor={0.3}      // 1 = Onde lisce, 0 = Onde irregolari e blob
       >
-        {healers.map((healer) => (
+        {healers.map((healer: { id: Key | null | undefined; img: string; title: string | undefined; subtitle: string | undefined; }) => (
           <SacredGeometryElement
             key={healer.id}
             img={healer.img}
