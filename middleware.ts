@@ -7,8 +7,6 @@ import { NextResponse } from 'next/server';
 const intlMiddleware = createMiddleware(routing);
 
 const { auth } = NextAuth(authConfig);
-
-
 export const runtime = 'experimental-edge';
 
 export default auth((req) => {
