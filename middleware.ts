@@ -43,7 +43,7 @@ export default auth((req) => {
     }
   } else {
     if (isSecretLoginRoute || isDirectLoginRoute) {
-      const redirectUrl = new URL(req.url);
+      const redirectUrl = req.nextUrl.clone();
       redirectUrl.pathname = pathname.replace(`/admin/${salt}`, '/admin').replace('/login', '/admin');
       return NextResponse.redirect(redirectUrl);
     }
