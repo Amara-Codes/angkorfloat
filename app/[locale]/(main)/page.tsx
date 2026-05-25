@@ -159,8 +159,9 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
       <SacredGeometryGrid
         title={t('SacredGeometryGrid.title')}
         className="
-        w-full lg:px-64 pb-32 bg-custom-celadon 
-        dark:bg-linear-to-b dark:from-custom-blue dark:via-custom-blue/80 via-58%  dark:to-custom-blue "
+        w-full lg:px-32 pb-32 
+        bg-custom-celadon 
+        dark:bg-linear-to-b dark:from-custom-blue dark:via-custom-blue/80 via-58% dark:to-custom-blue"
         titleClassName="text-custom-blue dark:text-custom-coconut"
         linesClassName="text-custom-green dark:text-custom-celadon"
         auraClassName="text-custom-coconut dark:text-custom-rosewood"
@@ -168,7 +169,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         cardTitleClassName="text-custom-blue dark:text-custom-coconut"
         cardSubtitleClassName="text-custom-blue dark:text-custom-coconut"
         energy={7}             // Velocità di vibrazione
-        karmaAlignment={.3}   // 1 = Poligono perfetto, 0 = Nodi disordinati
+        karmaAlignment={.75}   // 1 = Poligono perfetto, 0 = Nodi disordinati
         karmaFactor={0.3}      // 1 = Onde lisce, 0 = Onde irregolari e blob
       >
         {healers.map((healer: { id: Key | null | undefined; img: string; title: string | undefined; subtitle: string | undefined; }) => (
