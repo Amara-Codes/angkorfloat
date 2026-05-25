@@ -23,7 +23,6 @@ export default function HorizontalSliderModule({ module, onChange }: HorizontalS
         <Input label="Title" value={props.title} onChange={(v) => handleChange('title', v)} />
         <Input label="Subtitle" value={props.subtitle} onChange={(v) => handleChange('subtitle', v)} />
       </div>
-      <Input label="Scroll Distance (e.g. 300vh)" value={props.scrollDistance} onChange={(v) => handleChange('scrollDistance', v)} />
 
       <div className="h-px bg-custom-blue/5 dark:bg-custom-coconut/5 my-4" />
 

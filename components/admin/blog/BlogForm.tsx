@@ -1388,7 +1388,7 @@ function getDefaultProps(type: ModuleType) {
     case 'paragraph': return { children: '', as: 'p', size: 'md', weight: 'normal', variant: 'default', align: 'left', scrollReveal: false, colorClassName: 'text-custom-blue/100 dark:text-custom-celadon/100', fontFamily: 'standard' };
     case 'quote': return { children: '', author: '', authorDates: '', authorInfo: '', colorClassName: 'text-custom-blue/100 dark:text-custom-celadon/100', bgColorClassName: 'bg-custom-coconut/20 dark:bg-custom-blue/20', fontFamily: 'standard' };
     case 'paragraphWithImage': return { children: '', as: 'p', size: 'md', weight: 'normal', variant: 'default', align: 'left', imageSrc: '', imageAlt: '', imagePosition: 'left', imageAspectRatio: 'video', parallax: true, parallaxSpeed: 0.3, overlayOpacity: 0.4, colorClassName: 'text-custom-blue/100 dark:text-custom-celadon/100', fontFamily: 'standard' };
-    case 'horizontalSlider': return { title: '', subtitle: '', scrollDistance: '300vh', items: [] };
+    case 'horizontalSlider': return { title: '', subtitle: '', scrollDistance: 'auto', items: [] };
     case 'actioncta': return { title: '', paragraph: '', imageSrc: '', imageAlt: '', imagePosition: 'right', buttonOneLabel: 'Learn More', buttonOneLink: '/', buttonOneVariant: 'outline', buttonTwoLabel: '', buttonTwoLink: '', buttonTwoVariant: 'secondary', fontFamily: 'standard', titleColorClassName: 'text-custom-rosewood/100 dark:text-custom-celadon/100', paragraphColorClassName: 'text-custom-blue/100 dark:text-custom-celadon/100' };
     case 'spacer': return { height: 'md', type: 'spacer', lineColor: 'transparent', lineWidth: '100%', opacity: 0.2, lineHeight: '1' };
     default: return {};

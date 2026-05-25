@@ -100,7 +100,7 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
 
   return (
     <div className={cn(
-      "w-full overflow-x-hidden flex flex-col gap-y-16 min-h-screen transition-colors duration-700 pb-32",
+      "w-full flex flex-col gap-y-16 min-h-screen transition-colors duration-700 pb-32",
       post?.pageTheme ? PAGE_THEMES_MAP[post.pageTheme] : "bg-white dark:bg-custom-blue",
       post?.pageTheme ? PAGE_TEXT_THEMES_MAP[post.pageTheme] : "text-custom-blue dark:text-custom-coconut"
     )}>
@@ -193,10 +193,11 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
               </section>
             );
 
-          case 'paragraphWithImage':
+          case 'paragraphWithImage': {
+            const isBg = props.imagePosition === 'background';
             return (
-              <section key={id} className="md:px-12 lg:px-24 transition-colors duration-500">
-                <div className="max-w-7xl mx-auto">
+              <section key={id} className={cn("transition-colors duration-500", !isBg && "md:px-12 lg:px-24")}>
+                <div className={cn(!isBg && "max-w-7xl mx-auto")}>
                   <ParagraphWithImage
                     imageSrc={resolveMediaUrl(props.imageUrl || props.image || props.imageSrc) || ""}
                     imageAlt={props.imageAlt}
@@ -215,6 +216,7 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
                 </div>
               </section>
             );
+          }
 
           case 'quote': {
             const hasCustomBg = !!props.bgColorClassName;
@@ -252,7 +254,7 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
                 key={id}
                 title={props.title}
                 subtitle={props.subtitle}
-                scrollDistance={props.scrollDistance}
+                className="pb-32"
               >
                 {props.items?.map((item: any, idx: number) => (
                   <ScrollItem
@@ -313,10 +315,7 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
       {/* Author Card Footer */}
       {post?.showAuthor && post.author && (
         <section className="px-6 md:px-12 lg:px-24 mt-16 transition-colors duration-500">
-          <div className="max-w-3xl mx-auto">
-            {/* Divider */}
-            <div className="w-full h-px bg-custom-blue/10 dark:bg-custom-coconut/10 mb-16 animate-pulse" />
-            
+          <div className="max-w-3xl mx-auto">            
             {/* Author Card */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 p-8 sm:p-10 rounded-3xl bg-custom-coconut/20 dark:bg-custom-blue/20 border border-custom-blue/5 dark:border-custom-coconut/5 backdrop-blur-md shadow-lg hover:shadow-2xl hover:border-custom-celadon/30 dark:hover:border-custom-celadon/20 transition-all duration-500 group">
               <div className="h-20 w-20 rounded-full border-2 border-custom-celadon/40 dark:border-custom-celadon/20 shadow-md overflow-hidden flex items-center justify-center shrink-0 bg-custom-coconut/40 dark:bg-custom-blue/40 group-hover:scale-105 transition-transform duration-500">
