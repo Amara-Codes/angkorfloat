@@ -117,7 +117,6 @@ export const reverseColorMap: Record<string, string> = {
   'custom-almond': 'almond',
 };
 
-
 // Module Types
 export type ModuleType =
   | 'simpleHero'
@@ -201,6 +200,13 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(initialCategoryIds);
   const [modules, setModules] = useState<Module[]>([]);
   const [collapsedModules, setCollapsedModules] = useState<Set<string>>(new Set());
+  const [lastAddedId, setLastAddedId] = useState<string | null>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const rightColumnRef = useRef<HTMLDivElement>(null);
+  const [buttonStyle, setButtonStyle] = useState<{ left: string; width: string }>({ left: 'auto', width: 'auto' });
+  const [showSeoWarningModal, setShowSeoWarningModal] = useState(false);
+  const bypassSeoCheckRef = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const [seo, setSeo] = useState<SeoData>({
     metaTitle: post?.metaTitle || '',
@@ -214,7 +220,6 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
     canonicalUrl: post?.canonicalUrl || '',
   });
   const [activeTab, setActiveTab] = useState<'content' | 'seo'>('content');
-
 
   // Previews
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(resolveMediaUrl(post?.thumbnailUrl || post?.thumbnailImage));
@@ -249,13 +254,89 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
     }
   }, [post]);
 
+  useEffect(() => {
+    if (lastAddedId) {
+      const timer = setTimeout(() => {
+        const element = document.getElementById(`module-card-${lastAddedId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        setLastAddedId(null);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [lastAddedId]);
+
+  useEffect(() => {
+    const updatePosition = () => {
+      const element = document.getElementById("canvas-controls");
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        setShowBackToTop(rect.top < -150);
+      }
+
+      const rightCol = rightColumnRef.current;
+      if (rightCol) {
+        const colRect = rightCol.getBoundingClientRect();
+        setButtonStyle({
+          left: `${colRect.left}px`,
+          width: `${colRect.width}px`
+        });
+      }
+    };
+
+    // Capture phase (true) lets us listen to scrolling inside ANY container (divs, window, etc.)
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    updatePosition(); // Initial calculation
+
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, []);
+
+  const handleEditMetaTags = () => {
+    setShowSeoWarningModal(false);
+    setActiveTab('seo');
+    setTimeout(() => {
+      const element = document.getElementById("canvas-controls");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
+  };
+
+  const handlePublishAnyway = () => {
+    setShowSeoWarningModal(false);
+    bypassSeoCheckRef.current = true;
+    if (formRef.current) {
+      formRef.current.requestSubmit();
+    }
+    setTimeout(() => {
+      bypassSeoCheckRef.current = false;
+    }, 100);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (bypassSeoCheckRef.current) return;
+
+    const isMissingSeo = !seo.metaTitle?.trim() || !seo.metaDescription?.trim();
+    if (published && isMissingSeo) {
+      e.preventDefault();
+      setShowSeoWarningModal(true);
+    }
+  };
+
   const addModule = (type: ModuleType) => {
+    const newId = Math.random().toString(36).substr(2, 9);
     const newModule: Module = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: newId,
       type,
       props: getDefaultProps(type),
     };
     setModules([...modules, newModule]);
+    setLastAddedId(newId);
   };
 
   const removeModule = (id: string) => {
@@ -283,7 +364,12 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
   const collapseAll = () => setCollapsedModules(new Set(modules.map(m => m.id)));
 
   return (
-    <form action={dispatch} className="max-w-6xl space-y-12 pb-32 transition-colors duration-300">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      action={dispatch}
+      className="max-w-6xl space-y-12 pb-32 transition-colors duration-300"
+    >
       <FormActions
         backLink="/admin/blog"
         backLabel="Back to list"
@@ -297,10 +383,10 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
       <input type="hidden" name="showAuthor" value={String(showAuthor)} />
       <input type="hidden" name="pageTheme" value={pageTheme} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Main Content Area */}
+      {/* Grid 1: Basic Info & Main Sidebar Settings */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+        {/* Left Column: Basic Info */}
         <div className="lg:col-span-2 space-y-10">
-
           {/* Phase 1: Basic Info */}
           <div className={cn(CARD_CLASSES, "p-8 sm:p-10")}>
             <div className="flex items-center gap-4 mb-10 border-b border-custom-blue/5 dark:border-custom-coconut/5 pb-6">
@@ -350,6 +436,125 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Right Column: Sidebar Settings */}
+        <div className="lg:col-span-1 space-y-8">
+          {/* Status Settings */}
+          <div className={cn(CARD_CLASSES, "p-8")}>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="p-3 bg-custom-blue/5 dark:bg-custom-coconut/10 rounded-2xl">
+                <Settings className="h-6 w-6 text-custom-blue dark:text-custom-celadon" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon">Visibility</h3>
+                <Label className="mb-0">Publish Status</Label>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-5 bg-custom-blue/2 dark:bg-custom-coconut/5 rounded-2xl border-2 border-custom-blue/5 dark:border-custom-coconut/5">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-4">
+                  <div className={cn("p-3 rounded-xl", published ? "bg-emerald-500/10 text-emerald-500" : "bg-custom-rosewood/10 text-custom-rosewood")}>
+                    {published ? <Globe className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
+                  </div>
+                  <div>
+                    <p className="font-black text-xs text-custom-blue dark:text-custom-almond">{published ? "Published" : "Draft"}</p>
+                    <p className="text-[9px] text-custom-blue/60 dark:text-custom-celadon/40 font-bold uppercase tracking-wider">{published ? "Live" : "Staging"}{!canPublish && " (Read-only)"}</p>
+                  </div>
+                </div>
+                <Toggle checked={published} onChange={setPublished} disabled={!canPublish} />
+              </div>
+            </div>
+
+            {/* Show Author Settings */}
+            <div className="flex items-center justify-between p-5 bg-custom-blue/2 dark:bg-custom-coconut/5 rounded-2xl border-2 border-custom-blue/5 dark:border-custom-coconut/5 mt-4">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-4">
+                  <div className={cn("p-3 rounded-xl", showAuthor ? "bg-emerald-500/10 text-emerald-500" : "bg-custom-rosewood/10 text-custom-rosewood")}>
+                    <User className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-black text-xs text-custom-blue dark:text-custom-almond">Show Author</p>
+                    <p className="text-[9px] text-custom-blue/60 dark:text-custom-celadon/40 font-bold uppercase tracking-wider">{showAuthor ? "Visible" : "Hidden"}</p>
+                  </div>
+                </div>
+                <Toggle checked={showAuthor} onChange={setShowAuthor} />
+              </div>
+            </div>
+          </div>
+
+          {/* Category Settings */}
+          <div className={cn(CARD_CLASSES, "p-8")}>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="p-3 bg-custom-blue/5 dark:bg-custom-coconut/10 rounded-2xl">
+                <Tag className="h-6 w-6 text-custom-blue dark:text-custom-celadon" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon">Category</h3>
+                <span className="text-[10px] font-bold text-custom-blue/60 dark:text-custom-celadon/60 uppercase tracking-[0.2em]">Assign Categories</span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <Select
+                value={selectedCategoryIds.join(',')}
+                onChange={(val) => {
+                  const arr = val ? val.split(',') : [];
+                  setSelectedCategoryIds(arr);
+                }}
+                size="lg"
+                multiselectMode={true}
+                placeholder="Select categories..."
+              >
+                {categories.map((cat) => (
+                  <SelectOption key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectOption>
+                ))}
+              </Select>
+
+              {/* Selected Categories Badges */}
+              <div className="flex flex-wrap gap-2">
+                <AnimatePresence>
+                  {selectedCategoryIds.map((id) => {
+                    const category = categories.find((c) => c.id === id);
+                    if (!category) return null;
+                    return (
+                      <motion.span
+                        key={id}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-custom-blue/10 dark:bg-custom-celadon/10 text-custom-blue dark:text-custom-celadon border border-custom-blue/5 dark:border-custom-celadon/5 shadow-sm"
+                      >
+                        {category.name}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newIds = selectedCategoryIds.filter((cid) => cid !== id);
+                            setSelectedCategoryIds(newIds);
+                          }}
+                          className="hover:text-custom-rosewood dark:hover:text-custom-rosewood transition-colors p-0.5"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </motion.span>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </div>
+            <input type="hidden" name="categoryIds" value={selectedCategoryIds.join(',')} />
+          </div>
+        </div>
+      </div>
+
+      {/* Grid 2: Builder Canvas & Add Module Toolkit */}
+      <div id="canvas-controls" className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12 items-start scroll-mt-[100px]">
+        {/* Left Column: Canvas Builder Area */}
+        <div className="lg:col-span-2 space-y-10">
 
           {/* Builder Tabs */}
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -417,11 +622,12 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
                     <Reorder.Item
                       key={module.id}
                       value={module}
+                      id={`module-card-${module.id}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      style={{ overflow: "visible" }}
+                      style={{ overflow: "visible", scrollMarginTop: "100px" }}
                     >
                       <div className={cn(
                         "group relative bg-custom-coconut/50 dark:bg-custom-blue border border-custom-blue/5 dark:border-custom-coconut/5 rounded-2xl shadow-xl transition-all hover:shadow-2xl hover:border-custom-blue/20 dark:hover:border-custom-coconut/20 overflow-visible!",
@@ -484,28 +690,9 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
                       <Layout className="h-10 w-10 text-custom-blue/20 dark:text-custom-celadon/20" />
                     </div>
                     <h4 className="text-xl font-kugile text-custom-blue/60 dark:text-custom-celadon/40">No modules added yet</h4>
-                    <p className="text-xs text-custom-blue/30 dark:text-custom-celadon/30 mt-2 max-w-xs mx-auto">Start building your page by selecting a module from the options below.</p>
+                    <p className="text-xs text-custom-blue/30 dark:text-custom-celadon/30 mt-2 max-w-xs mx-auto">Start building your page by selecting a module from the sidebar palette.</p>
                   </div>
                 )}
-              </div>
-
-              <div className="mt-16 bg-custom-coconut/40 dark:bg-custom-blue/40 border border-custom-coconut/20 dark:border-custom-coconut/10 rounded-4xl p-8 backdrop-blur-2xl">
-                <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-custom-blue/60 dark:text-custom-celadon/40 text-center mb-10">Add Content Module</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-                  {moduleOptions.map(option => (
-                    <button
-                      key={option.type}
-                      type="button"
-                      onClick={() => addModule(option.type)}
-                      className="flex flex-col items-center gap-4 p-6 rounded-3xl bg-custom-coconut/40 dark:bg-custom-coconut/5 border border-custom-coconut/20 dark:border-custom-coconut/10 hover:bg-custom-coconut hover:border-custom-blue/20 dark:hover:bg-custom-coconut/10 transition-all duration-500 group shadow-sm hover:shadow-xl hover:-translate-y-1"
-                    >
-                      <div className="h-14 w-14 rounded-2xl bg-custom-blue/5 dark:bg-custom-coconut/10 flex items-center justify-center text-custom-blue dark:text-custom-celadon group-hover:scale-110 transition-transform duration-500">
-                        {option.icon}
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-custom-blue/60 dark:text-custom-celadon/60">{option.label}</span>
-                    </button>
-                  ))}
-                </div>
               </div>
             </>
           </div>
@@ -632,113 +819,37 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
           </div>
         </div>
 
-        {/* Sidebar Settings */}
-        <div className="space-y-8">
-          {/* Status Settings */}
-          <div className={cn(CARD_CLASSES, "p-8")}>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 bg-custom-blue/5 dark:bg-custom-coconut/10 rounded-2xl">
-                <Settings className="h-6 w-6 text-custom-blue dark:text-custom-celadon" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon">Visibility</h3>
-                <Label className="mb-0">Publish Status</Label>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between p-5 bg-custom-blue/2 dark:bg-custom-coconut/5 rounded-2xl border-2 border-custom-blue/5 dark:border-custom-coconut/5">
-              <div className="flex items-center gap-4">
-                <div className={cn("p-3 rounded-xl", published ? "bg-emerald-500/10 text-emerald-500" : "bg-custom-rosewood/10 text-custom-rosewood")}>
-                  {published ? <Globe className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
+        {/* Right Column: Sidebar Palette */}
+        <div ref={rightColumnRef} className="lg:col-span-1">
+          {/* Add Content Module (Only visible when activeTab === 'content') */}
+          {activeTab === 'content' && (
+            <div className={cn(CARD_CLASSES, "p-6 sm:p-8")}>
+              <div className="flex items-center gap-3 mb-6 border-b border-custom-blue/5 dark:border-custom-coconut/5 pb-4">
+                <div className="p-2 bg-custom-blue/5 dark:bg-custom-coconut/10 rounded-xl shadow-inner">
+                  <Layout className="h-5 w-5 text-custom-blue dark:text-custom-celadon" />
                 </div>
                 <div>
-                  <p className="font-black text-xs text-custom-blue dark:text-custom-almond">{published ? "Published" : "Draft"}</p>
-                  <p className="text-[9px] text-custom-blue/60 dark:text-custom-celadon/40 font-bold uppercase tracking-wider">{published ? "Live" : "Staging"}{!canPublish && " (Read-only)"}</p>
+                  <h3 className="text-xs font-black text-custom-blue dark:text-custom-celadon uppercase tracking-[0.2em]">Add Module</h3>
+                  <p className="text-[9px] font-bold text-custom-blue/40 dark:text-custom-celadon/40 uppercase tracking-widest mt-0.5">Click to insert on canvas</p>
                 </div>
               </div>
-              <Toggle checked={published} onChange={setPublished} disabled={!canPublish} />
-            </div>
-
-            {/* Show Author Settings */}
-            <div className="flex items-center justify-between p-5 bg-custom-blue/2 dark:bg-custom-coconut/5 rounded-2xl border-2 border-custom-blue/5 dark:border-custom-coconut/5 mt-4">
-              <div className="flex items-center gap-4">
-                <div className={cn("p-3 rounded-xl", showAuthor ? "bg-emerald-500/10 text-emerald-500" : "bg-custom-rosewood/10 text-custom-rosewood")}>
-                  <User className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-black text-xs text-custom-blue dark:text-custom-almond">Show Author</p>
-                  <p className="text-[9px] text-custom-blue/60 dark:text-custom-celadon/40 font-bold uppercase tracking-wider">{showAuthor ? "Visible" : "Hidden"}</p>
-                </div>
-              </div>
-              <Toggle checked={showAuthor} onChange={setShowAuthor} />
-            </div>
-          </div>
-
-          {/* Category Settings */}
-          <div className={cn(CARD_CLASSES, "p-8")}>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 bg-custom-blue/5 dark:bg-custom-coconut/10 rounded-2xl">
-                <Tag className="h-6 w-6 text-custom-blue dark:text-custom-celadon" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon">Category</h3>
-                <span className="text-[10px] font-bold text-custom-blue/60 dark:text-custom-celadon/60 uppercase tracking-[0.2em]">Assign Categories</span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <Select
-                value={selectedCategoryIds.join(',')}
-                onChange={(val) => {
-                  const arr = val ? val.split(',') : [];
-                  setSelectedCategoryIds(arr);
-                }}
-                size="lg"
-                multiselectMode={true}
-                placeholder="Select categories..."
-              >
-                {categories.map((cat) => (
-                  <SelectOption key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectOption>
+              <div className="grid grid-cols-1 gap-3">
+                {moduleOptions.map(option => (
+                  <button
+                    key={option.type}
+                    type="button"
+                    onClick={() => addModule(option.type)}
+                    className="flex items-center gap-4 w-full p-4 rounded-2xl bg-custom-coconut/40 dark:bg-custom-coconut/5 border border-custom-coconut/20 dark:border-custom-coconut/10 hover:bg-custom-coconut hover:border-custom-blue/20 dark:hover:bg-custom-coconut/10 transition-all duration-300 group shadow-xs hover:shadow-md hover:translate-x-1"
+                  >
+                    <div className="h-10 w-10 shrink-0 rounded-xl bg-custom-blue/5 dark:bg-custom-coconut/10 flex items-center justify-center text-custom-blue dark:text-custom-celadon group-hover:scale-105 transition-transform duration-300">
+                      {option.icon}
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-custom-blue/60 dark:text-custom-celadon/60 text-left">{option.label}</span>
+                  </button>
                 ))}
-              </Select>
-
-              {/* Selected Categories Badges */}
-              <div className="flex flex-wrap gap-2">
-                <AnimatePresence>
-                  {selectedCategoryIds.map((id) => {
-                    const category = categories.find((c) => c.id === id);
-                    if (!category) return null;
-                    return (
-                      <motion.span
-                        key={id}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        transition={{ duration: 0.2 }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-custom-blue/10 dark:bg-custom-celadon/10 text-custom-blue dark:text-custom-celadon border border-custom-blue/5 dark:border-custom-celadon/5 shadow-sm"
-                      >
-                        {category.name}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newIds = selectedCategoryIds.filter((cid) => cid !== id);
-                            setSelectedCategoryIds(newIds);
-                          }}
-                          className="hover:text-custom-rosewood dark:hover:text-custom-rosewood transition-colors p-0.5"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                        </button>
-                      </motion.span>
-                    );
-                  })}
-                </AnimatePresence>
               </div>
             </div>
-            <input type="hidden" name="categoryIds" value={selectedCategoryIds.join(',')} />
-          </div>
-
+          )}
         </div>
       </div>
 
@@ -775,7 +886,91 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
           </div>
         </BaseModal.Footer>
       </BaseModal>
-    </form>
+
+       {/* Premium Floating Back to Controls Button, fixed and aligned to right column */}
+       <AnimatePresence>
+         {showBackToTop && (
+           <motion.button
+             type="button"
+             initial={{ opacity: 0, scale: 0.8, y: 20 }}
+             animate={{ opacity: 1, scale: 1, y: 0 }}
+             exit={{ opacity: 0, scale: 0.8, y: 20 }}
+             transition={{ type: "spring", stiffness: 260, damping: 20 }}
+             onClick={() => {
+               const element = document.getElementById("canvas-controls");
+               if (element) {
+                 element.scrollIntoView({ behavior: "smooth", block: "start" });
+               }
+             }}
+             style={{
+               left: buttonStyle.left,
+               width: buttonStyle.width,
+             }}
+             className="fixed bottom-8 z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2.5 px-6 py-4.5 rounded-2xl bg-custom-blue/95 dark:bg-custom-coconut/95 text-custom-coconut dark:text-custom-blue border border-custom-coconut/10 dark:border-custom-blue/10 shadow-[0_12px_40px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 font-black text-[10px] uppercase tracking-[0.2em]"
+           >
+             <ChevronUp className="h-4 w-4 text-custom-coconut dark:text-custom-blue animate-bounce" />
+             Back to Controls
+           </motion.button>
+         )}
+       </AnimatePresence>
+
+       {/* SEO Warning Modal */}
+       <BaseModal isOpen={showSeoWarningModal} onClose={() => setShowSeoWarningModal(false)} size="lg">
+         <BaseModal.Header onClose={() => setShowSeoWarningModal(false)}>
+           <div className="flex items-end gap-4">
+             <div className="p-3 bg-amber-500/10 rounded-2xl">
+               <Settings className="h-6 w-6 text-amber-500 animate-spin" style={{ animationDuration: '3s' }} />
+             </div>
+             <span className="text-amber-500 font-black tracking-tight">SEO Metadata Missing</span>
+           </div>
+         </BaseModal.Header>
+         <BaseModal.Body>
+           <div className="space-y-6">
+             <p className="text-custom-blue dark:text-custom-coconut font-medium leading-relaxed">
+               You are about to publish this article without a <strong className="font-bold">Meta Title</strong> or <strong className="font-bold">Meta Description</strong>. These tags are critical for search engine visibility and listing quality:
+             </p>
+             <div className="space-y-4 p-6 bg-custom-coconut/60 dark:bg-custom-blue/40 border border-custom-blue/5 dark:border-custom-coconut/5 rounded-3xl">
+               <div className="space-y-3">
+                 <h4 className="text-xs font-black uppercase tracking-[0.1em] text-custom-blue dark:text-custom-celadon flex items-center gap-2">
+                   <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                   Meta Title Importance
+                 </h4>
+                 <p className="text-xs text-custom-blue/70 dark:text-custom-celadon/70 leading-relaxed ps-4">
+                   Google uses this as the primary clickable headline in search results. Leaving it empty forces Google to auto-generate one, which is rarely optimized for your target audience.
+                 </p>
+               </div>
+               <div className="space-y-3 pt-3 border-t border-custom-blue/5 dark:border-custom-coconut/5">
+                 <h4 className="text-xs font-black uppercase tracking-[0.1em] text-custom-blue dark:text-custom-celadon flex items-center gap-2">
+                   <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                   Meta Description Importance
+                 </h4>
+                 <p className="text-xs text-custom-blue/70 dark:text-custom-celadon/70 leading-relaxed ps-4">
+                   This description is displayed below your title in Google search results. It serves as your organic advertisement copy, directly influencing whether users click through to your article.
+                 </p>
+               </div>
+             </div>
+           </div>
+         </BaseModal.Body>
+         <BaseModal.Footer>
+           <div className="flex flex-col sm:flex-row justify-end gap-4 w-full">
+             <button
+               type="button"
+               onClick={handlePublishAnyway}
+               className="px-8 py-4 bg-custom-rosewood/10 text-custom-rosewood hover:bg-custom-rosewood/20 rounded-2xl font-black text-sm transition-all"
+             >
+               Publish Anyway
+             </button>
+             <button
+               type="button"
+               onClick={handleEditMetaTags}
+               className="px-8 py-4 bg-custom-blue text-custom-coconut dark:bg-custom-celadon dark:text-custom-blue rounded-2xl font-black text-sm shadow-xl shadow-custom-blue/20 dark:shadow-custom-celadon/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+             >
+               Edit Meta Tags
+             </button>
+           </div>
+         </BaseModal.Footer>
+       </BaseModal>
+     </form>
   );
 }
 
