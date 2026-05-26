@@ -20,7 +20,8 @@ type ButtonVariant =
   | 'outline-light' 
   | 'ghost' 
   | 'ghost-light'
-  | 'theme-responsive';
+  | 'theme-responsive'
+  | 'color-picker';
 type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 // Definiamo i livelli di rotondità
 type ButtonRoundness = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
@@ -72,6 +73,7 @@ export function Button({
     ghost: "text-custom-blue hover:bg-custom-blue/5",
     "ghost-light": "text-white hover:bg-white/10",
     "theme-responsive": "bg-custom-celadon text-custom-blue/80 dark:bg-custom-blue dark:text-custom-celadon hover:bg-custom-celadon/90 hover:text-custom-blue dark:hover:bg-custom-blue/90 shadow-sm",
+    "color-picker": "bg-custom-blue/5 dark:bg-custom-celadon/5 text-custom-blue/50 dark:text-custom-celadon/50 hover:text-custom-blue dark:hover:text-custom-celadon border-2 border-custom-blue/50 dark:border-custom-celadon/50 border-offset-2  hover:border-custom-blue hover:dark:border-custom-celadon"
   };
 
   const sizes: Record<ButtonSize, string> = {

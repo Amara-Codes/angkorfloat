@@ -117,11 +117,11 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
                 imageSrc={resolveMediaUrl(props.imageUrl || props.image || props.imageSrc || post?.thumbnailUrl || "") || ""}
                 align={props.align}
                 vAlign={props.vAlign}
-                overlayOpacity={props.overlayOpacity}
-                lightOverlayColor={props.lightOverlayColor}
-                darkOverlayColor={props.darkOverlayColor}
+                overlayColorClassName={props.overlayColorClassName}
                 titleColorClassName={props.titleColorClassName}
                 subtitleColorClassName={props.subtitleColorClassName}
+                titleFontFamily={FONT_FAMILIES_MAP[props.titleFontFamily] || ""}
+                subtitleFontFamily={FONT_FAMILIES_MAP[props.subtitleFontFamily] || ""}
                 className={cn("", props.className)}
               />
             );
@@ -254,13 +254,16 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
                 key={id}
                 title={props.title}
                 subtitle={props.subtitle}
-                className="pb-32"
+                className={cn("pb-32 transition-colors duration-500", props.bgColorClassName)}
+                titleClasses={[props.titleColorClassName || "", props.titleColorClassName || ""]}
+                subtitleClasses={[props.subtitleColorClassName || "", props.subtitleColorClassName || ""]}
               >
                 {props.items?.map((item: any, idx: number) => (
                   <ScrollItem
                     key={item.id || idx}
                     title={item.title}
                     description={item.description}
+                    className={props.cardColorClassName}
                   />
                 ))}
               </HorizontalScrollSection>
@@ -275,9 +278,11 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
                 buttonOneLabel={props.buttonOneLabel}
                 buttonOneLink={props.buttonOneLink}
                 buttonOneVariant={props.buttonOneVariant}
+                buttonOneIsExternal={props.buttonOneIsExternal}
                 buttonTwoLabel={props.buttonTwoLabel}
                 buttonTwoLink={props.buttonTwoLink}
                 buttonTwoVariant={props.buttonTwoVariant}
+                buttonTwoIsExternal={props.buttonTwoIsExternal}
                 imageSrc={resolveMediaUrl(props.imageUrl || props.image || props.imageSrc) || ""}
                 imageAlt={props.imageAlt}
                 imagePosition={props.imagePosition}
@@ -295,6 +300,8 @@ export default function BlogPageRenderer({ content, post }: { content: string, p
                     height={props.height}
                     type={props.type}
                     lineColor={props.lineColor}
+                    lineColorClassName={props.lineColorClassName}
+                    lineColorClassNameDark={props.lineColorClassNameDark}
                     opacity={props.opacity}
                     lineWidth={props.lineWidth}
                     lineHeight={props.lineHeight}

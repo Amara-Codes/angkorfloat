@@ -3,7 +3,7 @@
 import { Input, Label } from "@/components/common/Input";
 import { Reorder } from "framer-motion";
 import { Plus, Trash2, GripVertical, Image as ImageIcon } from "lucide-react";
-import { Module } from "../BlogForm";
+import { Module, GranularColorPickerButton, GranularBGColorPickerButton } from "../BlogForm";
 
 interface HorizontalSliderModuleProps {
   module: Module;
@@ -18,15 +18,43 @@ export default function HorizontalSliderModule({ module, onChange }: HorizontalS
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="space-y-4 animate-in fade-in duration-500">
+      <div className="space-y-4 mb-16">
         <Input label="Title" value={props.title} onChange={(v) => handleChange('title', v)} />
+        <GranularColorPickerButton
+          label="Title Color"
+          value={props.titleColorClassName}
+          onChange={(v: string) => handleChange('titleColorClassName', v)}
+        />
+      </div>
+      <div className="space-y-4 mb-16">
         <Input label="Subtitle" value={props.subtitle} onChange={(v) => handleChange('subtitle', v)} />
+
+        <GranularColorPickerButton
+          label="Subtitle Color"
+          value={props.subtitleColorClassName}
+          onChange={(v: string) => handleChange('subtitleColorClassName', v)}
+        />
       </div>
 
-      <div className="h-px bg-custom-blue/5 dark:bg-custom-coconut/5 my-4" />
 
-      <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4 mb-16">
+        <GranularBGColorPickerButton
+          label="Background Color - Light Mode"
+          value={props.bgColorClassName}
+          onChange={(v: string) => handleChange('bgColorClassName', v)}
+          themeMode="light"
+        />
+        <GranularBGColorPickerButton
+          label="Background Color - Dark Mode"
+          value={props.bgColorClassName}
+          onChange={(v: string) => handleChange('bgColorClassName', v)}
+          themeMode="dark"
+        />
+      </div>
+
+
+      <div className="space-y-4 mb-16">
         <div className="flex items-center justify-between">
           <Label className="mb-0">Slider Items</Label>
           <button
@@ -112,6 +140,22 @@ export default function HorizontalSliderModule({ module, onChange }: HorizontalS
             <p className="text-[10px] font-bold uppercase tracking-widest text-custom-blue/20">No items added to slider</p>
           </div>
         )}
+      </div>
+
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <GranularBGColorPickerButton
+          label="Card Color - Light Mode"
+          value={props.cardColorClassName}
+          onChange={(v: string) => handleChange('cardColorClassName', v)}
+          themeMode="light"
+        />
+        <GranularBGColorPickerButton
+          label="Card Color - Dark Mode"
+          value={props.cardColorClassName}
+          onChange={(v: string) => handleChange('cardColorClassName', v)}
+          themeMode="dark"
+        />
       </div>
     </div>
   );

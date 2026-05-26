@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, useEffect, useRef } from "react";
+import { useActionState, useState, useEffect, useRef, memo } from "react";
 import Image from "next/image";
 import { saveBlogPost } from "@/lib/actions/blog";
 import {
@@ -39,6 +39,7 @@ import { Reorder, AnimatePresence, motion } from "framer-motion";
 import { Select, SelectOption } from "@/components/common/Select";
 import BaseModal from "@/components/common/BaseModal";
 import { Input, Label } from "@/components/common/Input";
+import { Button } from "@/components/common/Button";
 
 // Module Sub-components
 import SimpleHeroModule from "./blog-module/SimpleHeroModule";
@@ -636,7 +637,7 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
                         {/* Module Header - Accordion Trigger */}
                         <div
                           className={cn(
-                            "flex items-center justify-between p-6 cursor-pointer select-none transition-colors",
+                            "flex items-center justify-between p-6 cursor-pointer select-none transition-colors rounded-2xl",
                             collapsedModules.has(module.id) ? "hover:bg-custom-blue/5 dark:hover:bg-custom-coconut/5" : "bg-custom-blue/2 dark:bg-custom-coconut/2 border-b border-custom-blue/5 dark:border-custom-coconut/5"
                           )}
                           onClick={() => toggleCollapse(module.id)}
@@ -887,90 +888,90 @@ export default function BlogForm({ post, categories = [], initialCategoryIds = [
         </BaseModal.Footer>
       </BaseModal>
 
-       {/* Premium Floating Back to Controls Button, fixed and aligned to right column */}
-       <AnimatePresence>
-         {showBackToTop && (
-           <motion.button
-             type="button"
-             initial={{ opacity: 0, scale: 0.8, y: 20 }}
-             animate={{ opacity: 1, scale: 1, y: 0 }}
-             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-             onClick={() => {
-               const element = document.getElementById("canvas-controls");
-               if (element) {
-                 element.scrollIntoView({ behavior: "smooth", block: "start" });
-               }
-             }}
-             style={{
-               left: buttonStyle.left,
-               width: buttonStyle.width,
-             }}
-             className="fixed bottom-8 z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2.5 px-6 py-4.5 rounded-2xl bg-custom-blue/95 dark:bg-custom-coconut/95 text-custom-coconut dark:text-custom-blue border border-custom-coconut/10 dark:border-custom-blue/10 shadow-[0_12px_40px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 font-black text-[10px] uppercase tracking-[0.2em]"
-           >
-             <ChevronUp className="h-4 w-4 text-custom-coconut dark:text-custom-blue animate-bounce" />
-             Back to Controls
-           </motion.button>
-         )}
-       </AnimatePresence>
+      {/* Premium Floating Back to Controls Button, fixed and aligned to right column */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            type="button"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            onClick={() => {
+              const element = document.getElementById("canvas-controls");
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }}
+            style={{
+              left: buttonStyle.left,
+              width: buttonStyle.width,
+            }}
+            className="fixed bottom-8 z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2.5 px-6 py-4.5 rounded-2xl bg-custom-blue/95 dark:bg-custom-coconut/95 text-custom-coconut dark:text-custom-blue border border-custom-coconut/10 dark:border-custom-blue/10 shadow-[0_12px_40px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.35)] backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 font-black text-[10px] uppercase tracking-[0.2em]"
+          >
+            <ChevronUp className="h-4 w-4 text-custom-coconut dark:text-custom-blue animate-bounce" />
+            Back to Controls
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-       {/* SEO Warning Modal */}
-       <BaseModal isOpen={showSeoWarningModal} onClose={() => setShowSeoWarningModal(false)} size="lg">
-         <BaseModal.Header onClose={() => setShowSeoWarningModal(false)}>
-           <div className="flex items-end gap-4">
-             <div className="p-3 bg-amber-500/10 rounded-2xl">
-               <Settings className="h-6 w-6 text-amber-500 animate-spin" style={{ animationDuration: '3s' }} />
-             </div>
-             <span className="text-amber-500 font-black tracking-tight">SEO Metadata Missing</span>
-           </div>
-         </BaseModal.Header>
-         <BaseModal.Body>
-           <div className="space-y-6">
-             <p className="text-custom-blue dark:text-custom-coconut font-medium leading-relaxed">
-               You are about to publish this article without a <strong className="font-bold">Meta Title</strong> or <strong className="font-bold">Meta Description</strong>. These tags are critical for search engine visibility and listing quality:
-             </p>
-             <div className="space-y-4 p-6 bg-custom-coconut/60 dark:bg-custom-blue/40 border border-custom-blue/5 dark:border-custom-coconut/5 rounded-3xl">
-               <div className="space-y-3">
-                 <h4 className="text-xs font-black uppercase tracking-[0.1em] text-custom-blue dark:text-custom-celadon flex items-center gap-2">
-                   <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                   Meta Title Importance
-                 </h4>
-                 <p className="text-xs text-custom-blue/70 dark:text-custom-celadon/70 leading-relaxed ps-4">
-                   Google uses this as the primary clickable headline in search results. Leaving it empty forces Google to auto-generate one, which is rarely optimized for your target audience.
-                 </p>
-               </div>
-               <div className="space-y-3 pt-3 border-t border-custom-blue/5 dark:border-custom-coconut/5">
-                 <h4 className="text-xs font-black uppercase tracking-[0.1em] text-custom-blue dark:text-custom-celadon flex items-center gap-2">
-                   <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-                   Meta Description Importance
-                 </h4>
-                 <p className="text-xs text-custom-blue/70 dark:text-custom-celadon/70 leading-relaxed ps-4">
-                   This description is displayed below your title in Google search results. It serves as your organic advertisement copy, directly influencing whether users click through to your article.
-                 </p>
-               </div>
-             </div>
-           </div>
-         </BaseModal.Body>
-         <BaseModal.Footer>
-           <div className="flex flex-col sm:flex-row justify-end gap-4 w-full">
-             <button
-               type="button"
-               onClick={handlePublishAnyway}
-               className="px-8 py-4 bg-custom-rosewood/10 text-custom-rosewood hover:bg-custom-rosewood/20 rounded-2xl font-black text-sm transition-all"
-             >
-               Publish Anyway
-             </button>
-             <button
-               type="button"
-               onClick={handleEditMetaTags}
-               className="px-8 py-4 bg-custom-blue text-custom-coconut dark:bg-custom-celadon dark:text-custom-blue rounded-2xl font-black text-sm shadow-xl shadow-custom-blue/20 dark:shadow-custom-celadon/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-             >
-               Edit Meta Tags
-             </button>
-           </div>
-         </BaseModal.Footer>
-       </BaseModal>
-     </form>
+      {/* SEO Warning Modal */}
+      <BaseModal isOpen={showSeoWarningModal} onClose={() => setShowSeoWarningModal(false)} size="2xl">
+        <BaseModal.Header onClose={() => setShowSeoWarningModal(false)}>
+          <div className="flex items-end gap-4">
+            <div className="p-3 bg-amber-500/10 rounded-2xl">
+              <Settings className="h-6 w-6 text-amber-500 animate-spin" style={{ animationDuration: '3s' }} />
+            </div>
+            <span className="text-amber-500 text-2xl font-kugile font-black tracking-tight">SEO Metadata Missing</span>
+          </div>
+        </BaseModal.Header>
+        <BaseModal.Body>
+          <div className="space-y-6">
+            <p className="text-custom-blue dark:text-custom-coconut font-medium leading-relaxed">
+              You are about to publish this article without a <strong className="font-bold">Meta Title</strong> or <strong className="font-bold">Meta Description</strong>. These tags are critical for search engine visibility and listing quality:
+            </p>
+            <div className="space-y-4 p-6 bg-custom-coconut/60 dark:bg-custom-blue/40 border border-custom-blue/5 dark:border-custom-coconut/5 rounded-3xl">
+              <div className="space-y-3">
+                <h4 className="text-xs font-black uppercase tracking-[0.1em] text-custom-blue dark:text-custom-celadon flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                  Meta Title Importance
+                </h4>
+                <p className="text-xs text-custom-blue/70 dark:text-custom-celadon/70 leading-relaxed ps-4">
+                  Google uses this as the primary clickable headline in search results. Leaving it empty forces Google to auto-generate one, which is rarely optimized for your target audience.
+                </p>
+              </div>
+              <div className="space-y-3 pt-3 border-t border-custom-blue/5 dark:border-custom-coconut/5">
+                <h4 className="text-xs font-black uppercase tracking-[0.1em] text-custom-blue dark:text-custom-celadon flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                  Meta Description Importance
+                </h4>
+                <p className="text-xs text-custom-blue/70 dark:text-custom-celadon/70 leading-relaxed ps-4">
+                  This description is displayed below your title in Google search results. It serves as your organic advertisement copy, directly influencing whether users click through to your article.
+                </p>
+              </div>
+            </div>
+          </div>
+        </BaseModal.Body>
+        <BaseModal.Footer>
+          <div className="flex flex-col sm:flex-row justify-end gap-4 w-full">
+            <button
+              type="button"
+              onClick={handlePublishAnyway}
+              className="px-8 py-4 bg-custom-rosewood/10 text-custom-rosewood hover:bg-custom-rosewood/20 rounded-2xl font-black text-sm transition-all"
+            >
+              Publish Anyway
+            </button>
+            <button
+              type="button"
+              onClick={handleEditMetaTags}
+              className="px-8 py-4 bg-custom-blue text-custom-coconut dark:bg-custom-celadon dark:text-custom-blue rounded-2xl font-black text-sm shadow-xl shadow-custom-blue/20 dark:shadow-custom-celadon/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              Edit Meta Tags
+            </button>
+          </div>
+        </BaseModal.Footer>
+      </BaseModal>
+    </form>
   );
 }
 
@@ -1190,6 +1191,7 @@ export function OpacitySelector({ value, onChange, label }: { value: number, onC
 
 function OpacityRangeSelector({ value, onChange, label }: { value: number, onChange: (v: number) => void, label: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
@@ -1212,31 +1214,39 @@ function OpacityRangeSelector({ value, onChange, label }: { value: number, onCha
         ref={containerRef}
         className="relative h-2.5 w-full bg-custom-blue/10 dark:bg-custom-coconut/5 rounded-full cursor-pointer group touch-none"
         onPointerDown={(e) => {
+          setIsDragging(true);
+          e.currentTarget.setPointerCapture(e.pointerId);
           handleMove(e.clientX);
-          const handlePointerMove = (moveEvent: PointerEvent) => handleMove(moveEvent.clientX);
-          const handlePointerUp = () => {
-            window.removeEventListener('pointermove', handlePointerMove);
-            window.removeEventListener('pointerup', handlePointerUp);
-          };
-          window.addEventListener('pointermove', handlePointerMove);
-          window.addEventListener('pointerup', handlePointerUp);
+        }}
+        onPointerMove={(e) => {
+          if (isDragging) {
+            handleMove(e.clientX);
+          }
+        }}
+        onPointerUp={(e) => {
+          setIsDragging(false);
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }}
+        onPointerCancel={(e) => {
+          setIsDragging(false);
+          e.currentTarget.releasePointerCapture(e.pointerId);
         }}
       >
         {/* Track Glow */}
         <div
-          className="absolute inset-0 rounded-full blur-[2px] opacity-20 bg-custom-blue dark:bg-custom-celadon transition-all duration-150"
+          className={cn("absolute inset-0 rounded-full blur-[2px] opacity-20 bg-custom-blue dark:bg-custom-celadon", !isDragging && "transition-all duration-150")}
           style={{ width: `${value}%` }}
         />
 
         {/* Progress Bar */}
         <div
-          className="absolute top-0 left-0 h-full bg-linear-to-r from-custom-blue to-custom-blue/80 dark:from-custom-celadon dark:to-custom-celadon/80 rounded-full z-10 transition-all duration-150"
+          className={cn("absolute top-0 left-0 h-full bg-linear-to-r from-custom-blue to-custom-blue/80 dark:from-custom-celadon dark:to-custom-celadon/80 rounded-full z-10", !isDragging && "transition-all duration-150")}
           style={{ width: `${value}%` }}
         />
 
         {/* Thumb */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 h-5 w-5 bg-custom-coconut dark:bg-custom-blue border-4 border-custom-blue dark:border-custom-celadon rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.15)] cursor-grab active:cursor-grabbing z-20 hover:scale-110 transition-all duration-150"
+          className={cn("absolute top-1/2 -translate-y-1/2 h-5 w-5 bg-custom-coconut dark:bg-custom-blue border-4 border-custom-blue dark:border-custom-celadon rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.15)] z-20 hover:scale-110", isDragging ? "cursor-grabbing scale-110" : "cursor-grab", !isDragging && "transition-all duration-150")}
           style={{ left: `calc(${value}% - 10px)` }}
         />
       </div>
@@ -1249,6 +1259,7 @@ interface GranularColorPickerProps {
   value?: string;
   onChange: (newValue: string) => void;
   mode?: 'text' | 'bg';
+  themeMode?: 'all' | 'light' | 'dark';
 }
 
 export function GranularColorPicker({ label, value = "", onChange, mode = 'text' }: GranularColorPickerProps) {
@@ -1360,6 +1371,536 @@ export function GranularColorPicker({ label, value = "", onChange, mode = 'text'
     </div>
   );
 }
+
+export function GranularColorPickerButton({ label, value = "", onChange, mode = 'text' }: GranularColorPickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
+
+  let lightColor = "blue";
+  let lightOpacity = 100;
+  let darkColor = "celadon";
+  let darkOpacity = 100;
+
+  const prefix = mode === 'bg' ? 'bg-' : 'text-';
+  const darkPrefix = mode === 'bg' ? 'dark:bg-' : 'dark:text-';
+
+  const tokens = value ? value.split(" ") : [];
+
+  const lightToken = tokens.find(t => t.startsWith(prefix));
+  if (lightToken) {
+    const regex = new RegExp(`${prefix}([a-zA-Z0-9\\-]+)(?:\\/(\\d+))?`);
+    const match = lightToken.match(regex);
+    if (match) {
+      const parsedColor = reverseColorMap[match[1]] || match[1];
+      if (SITE_COLORS.some(c => c.id === parsedColor)) {
+        lightColor = parsedColor;
+      }
+      if (match[2]) {
+        lightOpacity = parseInt(match[2], 10);
+      }
+    }
+  }
+
+  const darkToken = tokens.find(t => t.startsWith(darkPrefix));
+  if (darkToken) {
+    const regex = new RegExp(`${darkPrefix}([a-zA-Z0-9\\-]+)(?:\\/(\\d+))?`);
+    const match = darkToken.match(regex);
+    if (match) {
+      const parsedColor = reverseColorMap[match[1]] || match[1];
+      if (SITE_COLORS.some(c => c.id === parsedColor)) {
+        darkColor = parsedColor;
+      }
+      if (match[2]) {
+        darkOpacity = parseInt(match[2], 10);
+      }
+    }
+  }
+
+  const updateColor = (lc: string, lo: number, dc: string, do_: number) => {
+    const lightTailwindColor = colorMap[lc] || lc;
+    const darkTailwindColor = colorMap[dc] || dc;
+    const lightClass = `${prefix}${lightTailwindColor}/${lo}`;
+    const darkClass = `${darkPrefix}${darkTailwindColor}/${do_}`;
+    onChange(`${lightClass} ${darkClass}`);
+  };
+
+  const getBgClass = (colorId: string) => {
+    if (colorId === 'black') return 'bg-black';
+    if (colorId === 'white') return 'bg-white border border-gray-200';
+    return `bg-custom-${colorId}`;
+  };
+
+  return (
+    <div className="space-y-2 relative">
+      <Label>{label}</Label>
+      <div className="mt-1">
+        <Button
+          type="button"
+          variant="color-picker"
+          roundness="xl"
+          size="lg"
+          fullWidth
+          onClick={() => setIsOpen(true)}
+          className=""
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-2">
+              <div className={cn("w-5 h-5 rounded-full shadow-sm ring-2 ring-custom-blue dark:ring-custom-celadon", getBgClass(lightColor))} style={{ opacity: lightOpacity / 100 }} />
+              <div className={cn("w-5 h-5 rounded-full shadow-sm ring-2 ring-custom-blue dark:ring-custom-celadon", getBgClass(darkColor))} style={{ opacity: darkOpacity / 100 }} />
+            </div>
+            <span>Choose Color</span>
+          </div>
+        </Button>
+      </div>
+
+      <BaseModal isOpen={isOpen} onClose={() => setIsOpen(false)} size="xl">
+        <BaseModal.Header onClose={() => setIsOpen(false)}>
+          {label}
+        </BaseModal.Header>
+        <BaseModal.Body>
+          <div className="space-y-12">
+            {/* Light Mode */}
+            <div className="space-y-5">
+              <div className="flex items-center gap-2 pb-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse shadow-md" />
+                <h6 className="text-xs font-black uppercase tracking-widest text-custom-blue dark:text-custom-celadon">Light Mode</h6>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                {SITE_COLORS.map(c => (
+                  <button
+                    key={`light-${c.id}`}
+                    type="button"
+                    onClick={() => updateColor(c.id, lightOpacity, darkColor, darkOpacity)}
+                    title={c.label}
+                    className={cn(
+                      "w-10 h-10 rounded-full shadow-md transition-all hover:scale-110 flex items-center justify-center border border-black/5 dark:border-white/5",
+                      getBgClass(c.id),
+                      lightColor === c.id ? "ring-4 ring-offset-2 ring-custom-blue dark:ring-custom-celadon scale-110" : ""
+                    )}
+                  />
+                ))}
+              </div>
+              <OpacityRangeSelector
+                label="Opacity"
+                value={lightOpacity}
+                onChange={(o) => updateColor(lightColor, o, darkColor, darkOpacity)}
+              />
+            </div>
+
+            {/* Dark Mode */}
+            <div className="space-y-5">
+              <div className="flex items-center gap-2 pb-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-indigo-500 animate-pulse shadow-md" />
+                <h6 className="text-xs font-black uppercase tracking-widest text-custom-blue dark:text-custom-celadon">Dark Mode</h6>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                {SITE_COLORS.map(c => (
+                  <button
+                    key={`dark-${c.id}`}
+                    type="button"
+                    onClick={() => updateColor(lightColor, lightOpacity, c.id, darkOpacity)}
+                    title={c.label}
+                    className={cn(
+                      "w-10 h-10 rounded-full shadow-md transition-all hover:scale-110 flex items-center justify-center border border-black/5 dark:border-white/5",
+                      getBgClass(c.id),
+                      darkColor === c.id ? "ring-4 ring-offset-2 ring-custom-blue dark:ring-custom-celadon scale-110" : ""
+                    )}
+                  />
+                ))}
+              </div>
+              <OpacityRangeSelector
+                label="Opacity"
+                value={darkOpacity}
+                onChange={(o) => updateColor(lightColor, lightOpacity, darkColor, o)}
+              />
+            </div>
+          </div>
+        </BaseModal.Body>
+        <BaseModal.Footer>
+          <div className="flex justify-end">
+            <Button variant="primary" onClick={() => setIsOpen(false)}>
+              Done
+            </Button>
+          </div>
+        </BaseModal.Footer>
+      </BaseModal>
+    </div>
+  );
+}
+
+
+const ColorGrid = memo(({ title, color, opacity, onColorChange, onOpChange }: any) => {
+  const getBgClass = (colorId: string) => {
+    if (colorId === 'black') return 'bg-black';
+    if (colorId === 'white') return 'bg-white border border-gray-200';
+    return `bg-custom-${colorId}`;
+  };
+
+  return (
+    <div className="space-y-3 p-4 bg-black/5 dark:bg-white/5 rounded-2xl w-full">
+      <h6 className="text-[10px] font-black uppercase tracking-widest text-custom-blue/80 dark:text-custom-celadon/80">{title}</h6>
+      <div className="flex flex-wrap gap-2">
+        {SITE_COLORS.map((c: any) => (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => onColorChange(c.id)}
+            title={c.label}
+            className={cn(
+              "w-8 h-8 rounded-full shadow-sm transition-all hover:scale-110 flex items-center justify-center border border-black/10 dark:border-white/10",
+              getBgClass(c.id),
+              color === c.id ? "ring-2 ring-offset-2 ring-custom-blue dark:ring-custom-celadon scale-110" : ""
+            )}
+          />
+        ))}
+      </div>
+      <OpacityRangeSelector label="Opacity" value={opacity} onChange={onOpChange} />
+    </div>
+  );
+});
+ColorGrid.displayName = 'ColorGrid';
+
+export function GranularBGColorPickerButton({ label, value = "", onChange, themeMode = 'light' }: GranularColorPickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'solid' | 'gradient'>('solid');
+
+  const prefix = themeMode === 'dark' ? 'dark:' : '';
+  const [otherClasses, setOtherClasses] = useState('');
+
+  // Solid State
+  const [solidColor, setSolidColor] = useState('coconut');
+  const [solidOpacity, setSolidOpacity] = useState(100);
+
+  // Gradient State
+  const [gradDir, setGradDir] = useState('b');
+  const [gradFrom, setGradFrom] = useState('blue');
+  const [gradFromOp, setGradFromOp] = useState(100);
+  const [useVia, setUseVia] = useState(false);
+  const [gradVia, setGradVia] = useState('celadon');
+  const [gradViaOp, setGradViaOp] = useState(100);
+  const [gradViaPos, setGradViaPos] = useState(50);
+  const [gradTo, setGradTo] = useState('coconut');
+  const [gradToOp, setGradToOp] = useState(100);
+
+  // Initialize from value
+  useEffect(() => {
+    if (!value) return;
+    const tokens = value.split(" ");
+
+    const ourTokens: string[] = [];
+    const otherTokens: string[] = [];
+
+    tokens.forEach(t => {
+      if (!t) return;
+      if (themeMode === 'dark') {
+        if (t.startsWith('dark:')) ourTokens.push(t.replace('dark:', ''));
+        else otherTokens.push(t);
+      } else {
+        if (t.startsWith('dark:')) otherTokens.push(t);
+        else ourTokens.push(t);
+      }
+    });
+
+    setOtherClasses(otherTokens.join(' '));
+
+    const hasGradient = ourTokens.some(t => t.includes('bg-linear-to-') || t.includes('bg-gradient-to-'));
+    setActiveTab(hasGradient ? 'gradient' : 'solid');
+
+    if (hasGradient) {
+      const dirToken = ourTokens.find(t => t.startsWith('bg-linear-to-') || t.startsWith('bg-gradient-to-'));
+      const fromToken = ourTokens.find(t => t.startsWith('from-'));
+      const viaToken = ourTokens.find(t => t.startsWith('via-') && !t.includes('%') && !t.includes('['));
+      const viaPosToken = ourTokens.find(t => t.startsWith('via-') && (t.includes('%') || t.includes('[')));
+      const toToken = ourTokens.find(t => t.startsWith('to-'));
+
+      const extract = (token: string, type: 'from' | 'via' | 'to') => {
+        const match = token.match(new RegExp(`^${type}-([a-zA-Z0-9\\-]+)(?:\\/(\\d+))?$`));
+        if (match) {
+          const c = reverseColorMap[match[1]] || match[1];
+          const o = match[2] ? parseInt(match[2], 10) : 100;
+          return { color: c, opacity: o };
+        }
+        return null;
+      };
+
+      if (dirToken) {
+        const m = dirToken.match(/to-([a-z]+)$/);
+        if (m) setGradDir(m[1]);
+      }
+
+      const f = fromToken ? extract(fromToken, 'from') : null;
+      if (f) { setGradFrom(f.color); setGradFromOp(f.opacity); }
+
+      const v = viaToken ? extract(viaToken, 'via') : null;
+      if (v) { setUseVia(true); setGradVia(v.color); setGradViaOp(v.opacity); }
+
+      if (viaPosToken) {
+        const m = viaPosToken.match(/via-\[?(\d+)%\]?/);
+        if (m) setGradViaPos(parseInt(m[1], 10));
+      }
+
+      const t = toToken ? extract(toToken, 'to') : null;
+      if (t) { setGradTo(t.color); setGradToOp(t.opacity); }
+
+    } else {
+      const token = ourTokens.find(t => t.startsWith('bg-') && !t.includes('linear-to') && !t.includes('gradient-to'));
+      if (token) {
+        const match = token.match(/^bg-([a-zA-Z0-9\-]+)(?:\/(\d+))?$/);
+        if (match) {
+          setSolidColor(reverseColorMap[match[1]] || match[1]);
+          setSolidOpacity(match[2] ? parseInt(match[2], 10) : 100);
+        }
+      }
+    }
+  }, [value, themeMode]);
+
+  const emitChange = (
+    tab: 'solid' | 'gradient',
+    sC: string, sO: number,
+    gDir: string,
+    gF: string, gFO: number,
+    uV: boolean, gV: string, gVO: number, gVP: number,
+    gT: string, gTO: number
+  ) => {
+    let generatedClasses = [];
+    if (tab === 'solid') {
+      const lc = colorMap[sC] || sC;
+      generatedClasses = [`bg-${lc}/${sO}`];
+    } else {
+      const getC = (c: string) => colorMap[c] || c;
+      generatedClasses = [
+        `bg-linear-to-${gDir}`,
+        `from-${getC(gF)}/${gFO}`,
+        uV ? `via-${getC(gV)}/${gVO}` : '',
+        (uV && gVP !== 50) ? `via-[${gVP}%]` : '',
+        `to-${getC(gT)}/${gTO}`
+      ].filter(Boolean);
+    }
+
+    const ourString = generatedClasses.map(c => `${prefix}${c}`).join(' ');
+
+    // Combine with other classes
+    const finalString = `${otherClasses} ${ourString}`.trim();
+    onChange(finalString);
+  };
+
+  const notify = (overrides: Record<string, any> = {}) => {
+    emitChange(
+      overrides.tab ?? activeTab,
+      overrides.sC ?? solidColor, overrides.sO ?? solidOpacity,
+      overrides.gDir ?? gradDir,
+      overrides.gF ?? gradFrom, overrides.gFO ?? gradFromOp,
+      overrides.uV ?? useVia, overrides.gV ?? gradVia, overrides.gVO ?? gradViaOp, overrides.gVP ?? gradViaPos,
+      overrides.gT ?? gradTo, overrides.gTO ?? gradToOp
+    );
+  };
+
+  const getBgClass = (colorId: string) => {
+    if (colorId === 'black') return 'bg-black';
+    if (colorId === 'white') return 'bg-white border border-gray-200';
+    return `bg-custom-${colorId}`;
+  };
+
+  const hexMap: Record<string, string> = {
+    'blue': '#2F3C7E',
+    'green': '#577760',
+    'celadon': '#e0e0e0',
+    'coconut': '#ededed',
+    'rosewood': '#924044',
+    'terracotta': '#d87a5e',
+    'almond': '#f9f4e8',
+    'black': '#000000',
+    'white': '#ffffff',
+  };
+
+  const getRgba = (color: string, opacity: number) => {
+    const hex = hexMap[color] || '#ffffff';
+    const r = parseInt(hex.slice(1, 3), 16) || 0;
+    const g = parseInt(hex.slice(3, 5), 16) || 0;
+    const b = parseInt(hex.slice(5, 7), 16) || 0;
+    return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
+  };
+
+  const getGradientStyle = (
+    dir: string,
+    from: string, fromOp: number,
+    useVia: boolean, via: string, viaOp: number, viaPos: number,
+    to: string, toOp: number
+  ) => {
+    const angleMap: Record<string, string> = {
+      't': '0deg', 'b': '180deg', 'l': '270deg', 'r': '90deg',
+      'tr': '45deg', 'tl': '315deg', 'br': '135deg', 'bl': '225deg'
+    };
+    const angle = angleMap[dir] || '180deg';
+    const cFrom = getRgba(from, fromOp);
+    const cTo = getRgba(to, toOp);
+    if (useVia) {
+      const cVia = getRgba(via, viaOp);
+      return { background: `linear-gradient(${angle}, ${cFrom} 0%, ${cVia} ${viaPos}%, ${cTo} 100%)` };
+    }
+    return { background: `linear-gradient(${angle}, ${cFrom} 0%, ${cTo} 100%)` };
+  };
+
+  return (
+    <div className="space-y-2 relative">
+      <Label>{label}</Label>
+      <div className="mt-1">
+        <Button
+          type="button"
+          variant="color-picker"
+          roundness="xl"
+          size="lg"
+          fullWidth
+          onClick={() => setIsOpen(true)}
+        >
+          <div className="flex items-center gap-3">
+            <div 
+              className={cn(
+                "w-5 h-5 rounded-full shadow-sm ring-2 ring-custom-blue dark:ring-custom-celadon", 
+                activeTab === 'solid' ? getBgClass(solidColor) : ""
+              )}
+              style={activeTab === 'gradient' ? getGradientStyle(gradDir, gradFrom, gradFromOp, useVia, gradVia, gradViaOp, gradViaPos, gradTo, gradToOp) : undefined}
+            />
+            <span>Choose Background</span>
+          </div>
+        </Button>
+      </div>
+
+      <BaseModal isOpen={isOpen} onClose={() => setIsOpen(false)} size="4xl">
+        <BaseModal.Header onClose={() => setIsOpen(false)}>
+          <div className="flex items-end justify-between w-full pr-4">
+            <span className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon">{label}</span>
+            <div className="flex p-1 bg-custom-blue/5 dark:bg-white/5 rounded-xl w-64">
+              <button
+                type="button"
+                onClick={() => { setActiveTab('solid'); notify({ tab: 'solid' }); }}
+                className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", activeTab === 'solid' ? "bg-white dark:bg-custom-blue shadow-sm text-custom-blue dark:text-custom-celadon" : "text-custom-blue/50 dark:text-white/50")}
+              >
+                Solid Color
+              </button>
+              <button
+                type="button"
+                onClick={() => { setActiveTab('gradient'); notify({ tab: 'gradient' }); }}
+                className={cn("flex-1 py-1.5 text-xs font-bold rounded-lg transition-all", activeTab === 'gradient' ? "bg-white dark:bg-custom-blue shadow-sm text-custom-blue dark:text-custom-celadon" : "text-custom-blue/50 dark:text-white/50")}
+              >
+                Gradient
+              </button>
+            </div>
+          </div>
+        </BaseModal.Header>
+        <BaseModal.Body>
+          <div className="space-y-4">
+            {activeTab === 'solid' ? (
+              <div className="max-w-md mx-auto">
+                <ColorGrid
+                  title="Background"
+                  color={solidColor} opacity={solidOpacity}
+                  onColorChange={(c: string) => { setSolidColor(c); notify({ sC: c }); }}
+                  onOpChange={(o: number) => { setSolidOpacity(o); notify({ sO: o }); }}
+                />
+              </div>
+            ) : (
+              <div className="space-y-4">
+
+                <div className="grid grid-cols-3 gap-2">
+                  {/* Direction row */}
+                  <div className={cn("col-span-1 flex flex-col justify-center gap-3 p-3 border border-custom-blue/20 dark:border-custom-celadon/20 rounded-2xl bg-black/5 dark:bg-white/5 transition-all duration-300", useVia ? "pb-11" : "")}>
+                    <Label className="m-0 w-full text-center">Direction</Label>
+                    <div className="grid grid-cols-4 gap-2 mx-auto">
+                      {['t', 'b', 'l', 'r', 'tr', 'tl', 'br', 'bl'].map(d => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => { setGradDir(d); notify({ gDir: d }); }}
+                          className={cn(
+                            "w-10 h-10 flex items-center justify-center rounded-xl font-bold uppercase text-xs transition-all",
+                            gradDir === d ? "bg-custom-blue text-white dark:bg-custom-celadon dark:text-custom-blue shadow-md" : "bg-white dark:bg-custom-blue/50 text-custom-blue/50 dark:text-white/50 hover:bg-white/50"
+                          )}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Preview Box */}
+                  <div className="col-span-2 flex flex-col h-full">
+                    <div
+                      className="w-full flex-1 min-h-[80px] rounded-2xl relative transition-all duration-300"
+                      style={getGradientStyle(gradDir, gradFrom, gradFromOp, useVia, gradVia, gradViaOp, gradViaPos, gradTo, gradToOp)}
+                    />
+                    {useVia && (
+                      <div className="px-2 pt-2 space-y-1">
+                        <div className="flex justify-between text-[10px] font-bold uppercase text-custom-blue/50 dark:text-custom-celadon/50">
+                          <span>Via Position</span>
+                          <span>{gradViaPos}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0" max="100"
+                          value={gradViaPos}
+                          onChange={(e) => { const v = parseInt(e.target.value); setGradViaPos(v); notify({ gVP: v }); }}
+                          className="w-full accent-custom-blue dark:accent-custom-celadon h-2 bg-black/10 dark:bg-white/10 rounded-lg appearance-none cursor-pointer"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+
+
+                <div className="space-y-4">
+
+
+                  {/* Colors columns/rows */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <ColorGrid title="From Color" color={gradFrom} opacity={gradFromOp} onColorChange={(c: string) => { setGradFrom(c); notify({ gF: c }); }} onOpChange={(o: number) => { setGradFromOp(o); notify({ gFO: o }); }} />
+
+                    <div className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h6 className="text-[10px] font-black uppercase tracking-widest text-custom-blue/80 dark:text-custom-celadon/80">Use Via (Middle Color)</h6>
+                        <Toggle checked={useVia} onChange={(v: boolean) => { setUseVia(v); notify({ uV: v }); }} />
+                      </div>
+                      {useVia && (
+                        <div className="pt-2 border-t border-black/5 dark:border-white/5 mt-2">
+                          <ColorGrid title="Via Color" color={gradVia} opacity={gradViaOp} onColorChange={(c: string) => { setGradVia(c); notify({ gV: c }); }} onOpChange={(o: number) => { setGradViaOp(o); notify({ gVO: o }); }} />
+                        </div>
+                      )}
+                    </div>
+
+                    <ColorGrid title="To Color" color={gradTo} opacity={gradToOp} onColorChange={(c: string) => { setGradTo(c); notify({ gT: c }); }} onOpChange={(o: number) => { setGradToOp(o); notify({ gTO: o }); }} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </BaseModal.Body>
+        <BaseModal.Footer>
+          <div className="flex justify-end">
+            <Button variant="primary" onClick={() => setIsOpen(false)}>
+              Done
+            </Button>
+          </div>
+        </BaseModal.Footer>
+      </BaseModal>
+    </div>
+  );
+}
+
 
 // Helpers
 function getDefaultProps(type: ModuleType) {

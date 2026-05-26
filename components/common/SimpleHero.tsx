@@ -11,10 +11,13 @@ interface SimpleHeroProps {
   className?: string;
   titleColorClassName?: string;
   subtitleColorClassName?: string;
-  overlayOpacity?: number;
-  vAlign?: 'top' | 'center' | 'bottom';
+  titleFontFamily?: string;
+  subtitleFontFamily?: string;
+  overlayColorClassName?: string;
   lightOverlayColor?: string;
   darkOverlayColor?: string;
+  overlayOpacity?: number;
+  vAlign?: 'top' | 'center' | 'bottom';
   children?: ReactNode;
 }
 
@@ -27,10 +30,13 @@ const SimpleHero: React.FC<SimpleHeroProps> = ({
   className = '',
   titleColorClassName = "",
   subtitleColorClassName = "",
-  overlayOpacity = 0.4,
+  overlayColorClassName = "",
+  titleFontFamily = "",
+  subtitleFontFamily = "",
+  lightOverlayColor, // Dummy props for fast refresh cache
+  darkOverlayColor,
+  overlayOpacity,
   vAlign = 'center',
-  lightOverlayColor = 'black',
-  darkOverlayColor = 'black',
   children,
 }) => {
   const alignmentClasses = {
@@ -49,17 +55,6 @@ const SimpleHero: React.FC<SimpleHeroProps> = ({
     top: 'justify-start',
     center: 'justify-center',
     bottom: 'justify-end',
-  };
-
-  const overlayColorClasses = {
-    coconut: "bg-custom-coconut",
-    celadon: "bg-custom-celadon",
-    blue: "bg-custom-blue",
-    green: "bg-custom-green",
-    rosewood: "bg-custom-rosewood",
-    almond: "bg-custom-almond",
-    black: "bg-black",
-    white: "bg-white",
   };
 
   const finalTitleColor = titleColorClassName || "text-custom-coconut/100 dark:text-custom-celadon/100";
@@ -84,23 +79,21 @@ const SimpleHero: React.FC<SimpleHeroProps> = ({
         {/* Dynamic Overlay */}
         <div 
           className={cn(
-            "absolute inset-0 transition-opacity duration-500",
-            overlayColorClasses[lightOverlayColor as keyof typeof overlayColorClasses] || "bg-black",
-            `dark:${overlayColorClasses[darkOverlayColor as keyof typeof overlayColorClasses] || "bg-black"}`
+            "absolute inset-0 transition-all duration-500",
+            overlayColorClassName || "bg-black/40 dark:bg-black/40"
           )} 
-          style={{ opacity: overlayOpacity }}
         />
       </div>
 
       {/* Content Container */}
       <div className={`container mx-auto px-6 md:px-12 lg:px-24 flex relative z-10 ${containerAlignment[align]}`}>
         <div className={`flex flex-col max-w-4xl ${alignmentClasses[align]} transition-all duration-700`}>
-          <h1 className={cn("text-5xl md:text-7xl lg:text-8xl font-kugile mb-6 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-1000 whitespace-pre-line", finalTitleColor)}>
+          <h1 className={cn("text-5xl md:text-7xl lg:text-8xl mb-6 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-6 duration-1000 whitespace-pre-line", titleFontFamily || "font-kugile", finalTitleColor)}>
             {title}
           </h1>
           
           {subtitle && (
-            <p className={cn("text-xl md:text-2xl font-josefin mb-10 leading-relaxed drop-shadow-lg max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 whitespace-pre-line", finalSubtitleColor)}>
+            <p className={cn("text-xl md:text-2xl mb-10 leading-relaxed drop-shadow-lg max-w-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 whitespace-pre-line", subtitleFontFamily || "font-josefin", finalSubtitleColor)}>
               {subtitle}
             </p>
           )}

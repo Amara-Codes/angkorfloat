@@ -7,6 +7,8 @@ interface SpacerProps {
   height?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | string;
   type?: "spacer" | "divider";
   lineColor?: "coconut" | "celadon" | "blue" | "green" | "rosewood" | "almond" | "transparent";
+  lineColorClassName?: string;
+  lineColorClassNameDark?: string;
   opacity?: number;
   className?: string;
   lineWidth?: string; // e.g. "100%", "50%", "200px"
@@ -46,6 +48,8 @@ export default function Spacer({
   height = "md",
   type = "spacer",
   lineColor = "transparent",
+  lineColorClassName = "",
+  lineColorClassNameDark = "",
   opacity = 0.2,
   className = "",
   lineWidth = "100%",
@@ -53,6 +57,10 @@ export default function Spacer({
 }: SpacerProps) {
   const hClass = heightMap[height] || "";
   const hStyle = !heightMap[height] ? { height } : {};
+  const colorClass = cn(
+    lineColorClassName || colorMap[lineColor] || "",
+    lineColorClassNameDark ? lineColorClassNameDark : ""
+  );
 
   return (
     <div 
@@ -61,7 +69,7 @@ export default function Spacer({
     >
       {type === "divider" && (
         <div 
-          className={cn(thicknessMap[lineHeight] || "h-px", colorMap[lineColor])} 
+          className={cn(thicknessMap[lineHeight] || "h-px", colorClass)} 
           style={{ width: lineWidth, opacity }}
         />
       )}

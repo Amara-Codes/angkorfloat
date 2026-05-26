@@ -5,6 +5,7 @@ import { Select, SelectOption } from "@/components/common/Select";
 import {
   Toggle,
   GranularColorPicker,
+  GranularColorPickerButton,
   FONT_FAMILIES,
   Module
 } from "../BlogForm";
@@ -22,9 +23,12 @@ export default function ParagraphModule({ module, onChange }: ParagraphModulePro
   };
 
   return (
-    <div className="space-y-8">
-      <Input label="Content Text" value={props.children} onChange={(v: string) => handleChange('children', v)} as="textarea" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-4 animate-in fade-in duration-500">
+      <div className="mb-16">
+        <Input label="Content Text" value={props.children} onChange={(v: string) => handleChange('children', v)} as="textarea" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
         <div className="space-y-2">
           <Label>As Tag</Label>
           <Select value={props.as} onChange={(v: string) => handleChange('as', v)} size="lg">
@@ -59,13 +63,14 @@ export default function ParagraphModule({ module, onChange }: ParagraphModulePro
             <SelectOption value="right">Right</SelectOption>
           </Select>
         </div>
-        <div className="md:col-span-2">
-          <GranularColorPicker
-            label="Text Color"
-            value={props.colorClassName}
-            onChange={(v: string) => handleChange('colorClassName', v)}
-          />
-        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+        <GranularColorPickerButton
+          label="Text Color"
+          value={props.colorClassName}
+          onChange={(v: string) => handleChange('colorClassName', v)}
+        />
         <div className="space-y-2">
           <Label>Font Family</Label>
           <Select value={props.fontFamily} onChange={(v: string) => handleChange('fontFamily', v)} size="lg">
@@ -74,6 +79,9 @@ export default function ParagraphModule({ module, onChange }: ParagraphModulePro
             ))}
           </Select>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4">
         <div className="flex flex-col justify-end">
           <div className="flex items-center justify-between p-4 bg-custom-blue/2 dark:bg-custom-coconut/2 rounded-2xl border-2 border-custom-blue/5 dark:border-custom-coconut/5 min-h-[66px]">
             <Label className="mb-0">Scroll Reveal</Label>

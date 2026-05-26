@@ -15,6 +15,8 @@ interface ActionCTAProps {
   buttonTwoLabel?: string;
   buttonTwoLink?: string;
   buttonTwoVariant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  buttonOneIsExternal?: boolean;
+  buttonTwoIsExternal?: boolean;
   className?: string; 
   titleClassName?: string;
   paragraphClassName?: string;
@@ -35,6 +37,8 @@ const ActionCTA: React.FC<ActionCTAProps> = ({
   buttonTwoLabel,
   buttonTwoLink,
   buttonTwoVariant = 'secondary',
+  buttonOneIsExternal = false,
+  buttonTwoIsExternal = false,
   className = "",
   titleClassName = "text-5xl md:text-7xl font-kugile leading-tight italic",
   paragraphClassName = "text-xl md:text-2xl font-bold leading-relaxed whitespace-pre-line opacity-90",
@@ -88,6 +92,7 @@ const ActionCTA: React.FC<ActionCTAProps> = ({
               href={buttonOneLink}
               roundness='full'
               className='w-fit'
+              isExternalLink={buttonOneIsExternal}
             >
               {buttonOneLabel}
             </Button>
@@ -99,6 +104,7 @@ const ActionCTA: React.FC<ActionCTAProps> = ({
                 href={buttonTwoLink}
                 roundness='full'
                 className='w-fit'
+                isExternalLink={buttonTwoIsExternal}
               >
                 {buttonTwoLabel}
               </Button>

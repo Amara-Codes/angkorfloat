@@ -5,9 +5,9 @@ import { Input, Label } from "@/components/common/Input";
 import { Select, SelectOption } from "@/components/common/Select";
 import {
   ImageUpload,
-  OpacitySelector,
-  GranularColorPicker,
-  SITE_COLORS,
+  GranularColorPickerButton,
+  GranularBGColorPickerButton,
+  FONT_FAMILIES,
   resolveMediaUrl,
   Module
 } from "../BlogForm";
@@ -26,24 +26,44 @@ export default function SimpleHeroModule({ module, onChange }: SimpleHeroModuleP
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="grid grid-cols-1  gap-8">
+    <div className="space-y-4 animate-in fade-in duration-500">
+      <div className="space-y-4 mb-16">
         <Input label="Title" value={props.title} onChange={(v: string) => handleChange('title', v)} />
-      <GranularColorPicker
-          label="Title Color"
-          value={props.titleColorClassName}
-          onChange={(v: string) => handleChange('titleColorClassName', v)}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <GranularColorPickerButton
+            label="Title Color"
+            value={props.titleColorClassName}
+            onChange={(v: string) => handleChange('titleColorClassName', v)}
+          />
+          <div className="space-y-2">
+            <Label>Title Font Family</Label>
+            <Select value={props.titleFontFamily} onChange={(v: string) => handleChange('titleFontFamily', v)} size="lg">
+              {FONT_FAMILIES.map((font: { id: string; label: string }) => (
+                <SelectOption key={font.id} value={font.id}>{font.label}</SelectOption>
+              ))}
+            </Select>
+          </div>
+        </div>
       </div>
-      <div className="grid grid-cols-1  gap-8">
+      <div className="space-y-4 mb-16">
         <Input label="Subtitle" value={props.subtitle} onChange={(v: string) => handleChange('subtitle', v)} />
-      <GranularColorPicker
-          label="Subtitle Color"
-          value={props.subtitleColorClassName}
-          onChange={(v: string) => handleChange('subtitleColorClassName', v)}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <GranularColorPickerButton
+            label="Subtitle Color"
+            value={props.subtitleColorClassName}
+            onChange={(v: string) => handleChange('subtitleColorClassName', v)}
+          />
+          <div className="space-y-2">
+            <Label>Subtitle Font Family</Label>
+            <Select value={props.subtitleFontFamily} onChange={(v: string) => handleChange('subtitleFontFamily', v)} size="lg">
+              {FONT_FAMILIES.map((font: { id: string; label: string }) => (
+                <SelectOption key={font.id} value={font.id}>{font.label}</SelectOption>
+              ))}
+            </Select>
+          </div>
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
         <div className="space-y-2">
           <Label>Align</Label>
           <Select value={props.align} onChange={(v: string) => handleChange('align', v)} size="lg">
@@ -61,7 +81,7 @@ export default function SimpleHeroModule({ module, onChange }: SimpleHeroModuleP
           </Select>
         </div>
       </div>
-      <div className="grid grid-cols-1  gap-8">
+      <div className="space-y-4 mb-16">
         <Label>Hero Image</Label>
         <ImageUpload
           name={`module_${module.id}_image`}
@@ -71,38 +91,23 @@ export default function SimpleHeroModule({ module, onChange }: SimpleHeroModuleP
             handleChange('imageSrc', v);
           }}
         />
-                <Input label="Image Alt" value={props.imageAlt} onChange={(v: string) => handleChange('imageAlt', v)} />
+        <Input label="Image Alt" value={props.imageAlt} onChange={(v: string) => handleChange('imageAlt', v)} />
       </div>
 
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-2">
-          <Label>Light Mode Overlay Color</Label>
-          <Select value={props.lightOverlayColor} onChange={(v: string) => handleChange('lightOverlayColor', v)} size="lg">
-            {SITE_COLORS.map((c: { id: string; label: string }) => (
-              <SelectOption key={c.id} value={c.id}>{c.label}</SelectOption>
-            ))}
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label>Dark Mode Overlay Color</Label>
-          <Select value={props.darkOverlayColor} onChange={(v: string) => handleChange('darkOverlayColor', v)} size="lg">
-            {SITE_COLORS.map((c: { id: string; label: string }) => (
-              <SelectOption key={c.id} value={c.id}>{c.label}</SelectOption>
-            ))}
-          </Select>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 gap-6">
-        <OpacitySelector
-          label="Overlay Opacity"
-          value={props.overlayOpacity}
-          onChange={(v: number) => handleChange('overlayOpacity', v)}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <GranularBGColorPickerButton
+          label="Overlay Color - Light Mode"
+          value={props.overlayColorClassName}
+          onChange={(v: string) => handleChange('overlayColorClassName', v)}
+          themeMode="light"
+        />
+        <GranularBGColorPickerButton
+          label="Overlay Color - Dark Mode"
+          value={props.overlayColorClassName}
+          onChange={(v: string) => handleChange('overlayColorClassName', v)}
+          themeMode="dark"
         />
       </div>
-
-
-
     </div>
   );
 }

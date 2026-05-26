@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 import {
   ImageUpload,
   Toggle,
-  GranularColorPicker,
+  GranularColorPickerButton,
+  GranularBGColorPickerButton,
   FONT_FAMILIES,
   resolveMediaUrl,
   Module
@@ -27,9 +28,9 @@ export default function GridHeroModule({ module, onChange }: GridHeroModuleProps
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-4 animate-in fade-in duration-500">
       {/* Phase 1: Media & Position */}
-      <div className="grid grid-cols-1 gap-8 items-start">
+      <div className="space-y-4 mb-16">
         <div className="space-y-4">
           <Label>Hero Image</Label>
           <ImageUpload
@@ -40,27 +41,29 @@ export default function GridHeroModule({ module, onChange }: GridHeroModuleProps
               handleChange('imageSrc', v);
             }}
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input label="Image Alt" value={props.imageAlt} onChange={(v: string) => handleChange('imageAlt', v)} />
-          <Label>Image Position</Label>
-          <Select value={props.imagePosition} onChange={(v: string) => handleChange('imagePosition', v)} size="lg">
-            <SelectOption value="left">Left</SelectOption>
-            <SelectOption value="right">Right</SelectOption>
-          </Select>
+          <div className="space-y-2">
+            <Label>Image Position</Label>
+            <Select value={props.imagePosition} onChange={(v: string) => handleChange('imagePosition', v)} size="lg">
+              <SelectOption value="left">Left</SelectOption>
+              <SelectOption value="right">Right</SelectOption>
+            </Select>
+          </div>
         </div>
       </div>
 
-      <div className="h-px bg-custom-blue/5 dark:bg-custom-coconut/5 mt-4 mb-8" />
-
       {/* Phase 2: Top Container (Children Part 1) */}
-      <div className="space-y-6 p-6 rounded-3xl bg-custom-blue/2 dark:bg-custom-coconut/2 border border-custom-blue/5 dark:border-custom-coconut/5">
-        <div className="mb-8">
+      <div className="space-y-4 p-4 rounded-2xl bg-custom-blue/2 dark:bg-custom-coconut/2 border border-custom-blue/5 dark:border-custom-coconut/5 mb-16">
+        <div className="mb-4">
           <h5 className="text-sm font-bold uppercase tracking-widest text-center text-custom-blue/60 dark:text-custom-celadon/40">Top Section</h5>
         </div>
 
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <Input label="Title" value={props.topTitle} onChange={(v: string) => handleChange('topTitle', v)} />
-            <GranularColorPicker
+        <div className="space-y-4 mb-16">
+          <Input label="Title" value={props.topTitle} onChange={(v: string) => handleChange('topTitle', v)} />
+          <div className="grid grid-cols-2 gap-4">
+            <GranularColorPickerButton
               label="Title Color"
               value={props.topTitleColorClassName}
               onChange={(v: string) => handleChange('topTitleColorClassName', v)}
@@ -74,12 +77,12 @@ export default function GridHeroModule({ module, onChange }: GridHeroModuleProps
               </Select>
             </div>
           </div>
+        </div>
 
- 
-
-          <div className="space-y-4 mt-16">
-            <Input label="Subtitle" value={props.topSubtitle} onChange={(v: string) => handleChange('topSubtitle', v)} as="textarea" />
-            <GranularColorPicker
+        <div className="space-y-4 mb-16">
+          <Input label="Subtitle" value={props.topSubtitle} onChange={(v: string) => handleChange('topSubtitle', v)} as="textarea" />
+          <div className="grid grid-cols-2 gap-4">
+            <GranularColorPickerButton
               label="Subtitle Color"
               value={props.topSubtitleColorClassName}
               onChange={(v: string) => handleChange('topSubtitleColorClassName', v)}
@@ -93,26 +96,34 @@ export default function GridHeroModule({ module, onChange }: GridHeroModuleProps
               </Select>
             </div>
           </div>
+        </div>
 
-          <GranularColorPicker
-            label="Background Color"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <GranularBGColorPickerButton
+            label="Background Color - Light Mode"
             value={props.topBgColorClassName}
             onChange={(v: string) => handleChange('topBgColorClassName', v)}
-            mode="bg"
+            themeMode="light"
+          />
+          <GranularBGColorPickerButton
+            label="Background Color - Dark Mode"
+            value={props.topBgColorClassName}
+            onChange={(v: string) => handleChange('topBgColorClassName', v)}
+            themeMode="dark"
           />
         </div>
       </div>
 
       {/* Phase 3: Bottom Container (Children Part 2) */}
-      <div className="space-y-6 p-6 rounded-3xl bg-custom-blue/2 dark:bg-custom-coconut/2 border border-custom-blue/5 dark:border-custom-coconut/5">
-        <div className="mb-8">
+      <div className="space-y-4 p-4 rounded-2xl bg-custom-blue/2 dark:bg-custom-coconut/2 border border-custom-blue/5 dark:border-custom-coconut/5">
+        <div className="mb-4">
           <h5 className="text-sm font-bold uppercase tracking-widest text-center text-custom-blue/60 dark:text-custom-celadon/40">Bottom Section</h5>
         </div>
 
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <Input label="Paragraph" value={props.bottomParagraph} onChange={(v: string) => handleChange('bottomParagraph', v)} as="textarea" />
-            <GranularColorPicker
+        <div className="space-y-4 mb-16">
+          <Input label="Paragraph" value={props.bottomParagraph} onChange={(v: string) => handleChange('bottomParagraph', v)} as="textarea" />
+          <div className="grid grid-cols-2 gap-4">
+            <GranularColorPickerButton
               label="Paragraph Color"
               value={props.bottomParagraphColorClassName}
               onChange={(v: string) => handleChange('bottomParagraphColorClassName', v)}
@@ -126,19 +137,27 @@ export default function GridHeroModule({ module, onChange }: GridHeroModuleProps
               </Select>
             </div>
           </div>
+        </div>
 
-          <GranularColorPicker
-            label="Background Color"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <GranularBGColorPickerButton
+            label="Background Color - Light Mode"
             value={props.bottomBgColorClassName}
             onChange={(v: string) => handleChange('bottomBgColorClassName', v)}
-            mode="bg"
+            themeMode="light"
+          />
+          <GranularBGColorPickerButton
+            label="Background Color - Dark Mode"
+            value={props.bottomBgColorClassName}
+            onChange={(v: string) => handleChange('bottomBgColorClassName', v)}
+            themeMode="dark"
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mt-8">
           <div className={cn(
             "flex items-center justify-between p-4 bg-custom-blue/2 dark:bg-custom-coconut/2 rounded-2xl border-2 border-custom-blue/5 dark:border-custom-coconut/5 min-h-[66px] transition-all duration-500",
-            !props.hasButton && "md:col-span-2"
+            !props.hasButton ? "md:col-span-2" : 'mt-16'
           )}>
             <Label className="mb-0">Has Button</Label>
             <Toggle checked={props.hasButton} onChange={(v: boolean) => handleChange('hasButton', v)} />
