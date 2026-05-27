@@ -44,6 +44,8 @@ export async function saveFaq(prevState: any, formData: FormData, id?: string) {
     const answer = (formData.get("answer") as string) || "";
     const answer_kh = (formData.get("answer_kh") as string) || null;
     const published = formData.get("published") === "true";
+    const categoryIdsStr = formData.get("categoryIds") as string;
+    const categoryIds = categoryIdsStr ? categoryIdsStr.split(",").filter(Boolean) : [];
 
     if (!question || !answer) {
       return "Missing required fields";
@@ -82,11 +84,21 @@ export async function saveFaq(prevState: any, formData: FormData, id?: string) {
     if (id) {
       await prisma.faq.update({
         where: { id },
-        data,
+        data: {
+          ...data,
+          categories: {
+            set: categoryIds.map((catId) => ({ id: catId })),
+          },
+        },
       });
     } else {
       await prisma.faq.create({
-        data,
+        data: {
+          ...data,
+          categories: {
+            connect: categoryIds.map((catId) => ({ id: catId })),
+          },
+        },
       });
     }
   } catch (error: any) {

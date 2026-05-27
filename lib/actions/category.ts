@@ -38,13 +38,20 @@ export async function saveCategory(prevState: any, formData: FormData, id?: stri
     }
 
     const name = (formData.get("name") as string) || "";
+    const applicableTo = (formData.get("applicableTo") as string) || "POST";
 
     if (!name.trim()) {
       return "Category name is required";
     }
 
+    const validScopes = ["POST", "FAQ", "BOTH"];
+    if (!validScopes.includes(applicableTo)) {
+      return "Invalid scope value.";
+    }
+
     const data = {
       name: name.trim(),
+      applicableTo,
     };
 
     if (id) {

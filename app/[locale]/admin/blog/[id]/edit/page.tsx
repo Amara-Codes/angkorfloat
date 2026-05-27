@@ -29,6 +29,7 @@ export default async function EditBlogPage({
   }
 
   const categories = await prisma.postCategory.findMany({
+    where: { applicableTo: { in: ["POST", "BOTH"] } },
     orderBy: { name: 'asc' },
   });
 

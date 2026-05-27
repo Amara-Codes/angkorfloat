@@ -26,7 +26,7 @@ import { canAccessResource, Resource } from "@/lib/rbac";
 const menuItems: { name: string; href: string; icon: any; resource?: Resource }[] = [
   { name: "Dashboard", href: "/admin", icon: Tent },
   { name: "Blog Posts", href: "/admin/blog", icon: Feather, resource: 'blog' },
-  { name: "Post Categories", href: "/admin/categories", icon: Tag, resource: 'category' },
+  { name: "Categories", href: "/admin/categories", icon: Tag, resource: 'category' },
   { name: "FAQs", href: "/admin/faq", icon: HelpCircle, resource: 'faq' },
   { name: "Therapists", href: "/admin/therapists", icon: Users, resource: 'therapist' },
   { name: "Healing Sessions", href: "/admin/sessions", icon: Webhook, resource: 'session' },

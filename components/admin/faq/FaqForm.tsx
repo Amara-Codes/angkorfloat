@@ -2,11 +2,12 @@
 
 import { useActionState, useState } from "react";
 import { saveFaq } from "@/lib/actions/faq";
-import { HelpCircle, Lock, Globe, AlertCircle, Settings } from "lucide-react";
+import { HelpCircle, Lock, Globe, AlertCircle, Settings, Tag } from "lucide-react";
 import FormActions from "@/components/admin/common/FormActions";
 import { cn } from "@/lib/utils";
 import BaseModal from "@/components/common/BaseModal";
 import { Input } from "@/components/common/Input";
+import { Select, SelectOption } from "@/components/common/Select";
 
 interface FaqFormProps {
   faq?: {
@@ -18,13 +19,23 @@ interface FaqFormProps {
     published: boolean;
   };
   canPublish?: boolean;
+  categories?: { id: string; name: string }[];
+  initialCategoryIds?: string[];
 }
 
-export default function FaqForm({ faq, canPublish = true }: FaqFormProps) {
+export default function FaqForm({
+  faq,
+  canPublish = true,
+  categories = [],
+  initialCategoryIds = [],
+}: FaqFormProps) {
   const saveAction = (prevState: any, formData: FormData) => saveFaq(prevState, formData, faq?.id);
   const [errorMessage, dispatch] = useActionState(saveAction, undefined);
   const [published, setPublished] = useState(faq ? faq.published : false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
+    initialCategoryIds[0] ?? ""
+  );
 
   // Trigger modal when error message arrives
   if (errorMessage && !showErrorModal) {
@@ -42,6 +53,8 @@ export default function FaqForm({ faq, canPublish = true }: FaqFormProps) {
 
       {/* Hidden input to pass published status */}
       <input type="hidden" name="published" value={String(published)} />
+      {/* Hidden input to pass category ID */}
+      <input type="hidden" name="categoryIds" value={selectedCategoryId} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Main Content Area */}
@@ -109,6 +122,7 @@ export default function FaqForm({ faq, canPublish = true }: FaqFormProps) {
 
         {/* Sidebar Settings */}
         <div className="space-y-8">
+          {/* Visibility Card */}
           <div className="bg-custom-coconut/40 dark:bg-custom-blue border border-custom-blue/5 dark:border-white/5 rounded-4xl p-8 shadow-2xl backdrop-blur-xl transition-all hover:shadow-custom-blue/5">
             <div className="flex items-center gap-4 mb-8">
               <div className="p-3 bg-custom-blue/5 dark:bg-custom-celadon/10 rounded-2xl">
@@ -148,6 +162,35 @@ export default function FaqForm({ faq, canPublish = true }: FaqFormProps) {
               </button>
             </div>
           </div>
+
+          {/* Categories Card */}
+          {categories.length > 0 && (
+            <div className="bg-custom-coconut/40 dark:bg-custom-blue border border-custom-blue/5 dark:border-white/5 rounded-4xl p-8 shadow-2xl backdrop-blur-xl transition-all hover:shadow-custom-blue/5">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-3 bg-custom-blue/5 dark:bg-custom-celadon/10 rounded-2xl">
+                  <Tag className="h-6 w-6 text-custom-blue dark:text-custom-celadon" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon">Category</h3>
+                  <span className="text-[10px] font-bold text-custom-blue/60 dark:text-custom-celadon/60 uppercase tracking-[0.2em]">Assign Category</span>
+                </div>
+              </div>
+
+              <Select
+                value={selectedCategoryId}
+                onChange={setSelectedCategoryId}
+                size="lg"
+                placeholder="Select a category..."
+              >
+                <SelectOption value="">— No category —</SelectOption>
+                {categories.map((cat) => (
+                  <SelectOption key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectOption>
+                ))}
+              </Select>
+            </div>
+          )}
         </div>
       </div>
       

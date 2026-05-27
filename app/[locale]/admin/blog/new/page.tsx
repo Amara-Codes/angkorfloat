@@ -15,6 +15,7 @@ export default async function NewBlogPage() {
   const canPublish = hasPermission(session, 'blog', 'publish');
 
   const categories = await prisma.postCategory.findMany({
+    where: { applicableTo: { in: ["POST", "BOTH"] } },
     orderBy: { name: 'asc' },
   });
 

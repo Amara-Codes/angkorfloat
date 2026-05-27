@@ -118,21 +118,24 @@ model FloatPackage {
 }
 
 model Faq {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   question    String
   question_kh String?
   answer      String
   answer_kh   String?
-  published   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  published   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  categories  PostCategory[] @relation("FaqToCategory")
 }
 
 model PostCategory {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  posts     BlogPost[] @relation("PostToCategory")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id            String     @id @default(cuid())
+  name          String     @unique
+  applicableTo  String     @default("POST")
+  posts         BlogPost[] @relation("PostToCategory")
+  faqs          Faq[]      @relation("FaqToCategory")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 

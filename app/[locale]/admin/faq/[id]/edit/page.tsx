@@ -15,6 +15,7 @@ export default async function EditFaqPage({
 
   const faq = await prisma.faq.findUnique({
     where: { id },
+    include: { categories: true },
   });
 
   if (!faq) {
@@ -23,7 +24,19 @@ export default async function EditFaqPage({
 
   const canPublish = hasPermission(session, 'faq', 'publish');
 
+  const categories = await prisma.postCategory.findMany({
+    where: { applicableTo: { in: ["FAQ", "BOTH"] } },
+    orderBy: { name: 'asc' },
+  });
+
+  const initialCategoryIds = faq.categories.map((c) => c.id);
+
   return (
-    <FaqForm faq={faq} canPublish={canPublish} />
+    <FaqForm
+      faq={faq}
+      canPublish={canPublish}
+      categories={categories}
+      initialCategoryIds={initialCategoryIds}
+    />
   );
 }
