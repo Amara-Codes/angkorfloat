@@ -35,53 +35,47 @@ export default async function CategoryListPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {categories.map((cat) => (
-          <Card key={cat.id} roundness="4xl" className="p-6 transition-all hover:translate-y-[-4px] hover:shadow-2xl">
-            <CardHeader className="mb-0 pb-0">
-              <div className="flex items-start justify-between w-full relative">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="p-2.5 bg-custom-blue/5 dark:bg-custom-celadon/10 rounded-xl shrink-0">
-                    <Tag className="h-6 w-6 text-custom-blue dark:text-custom-celadon" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon leading-snug truncate" title={cat.name}>
-                      {cat.name}
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1 border-l border-custom-blue/10 dark:border-white/10 ps-2 ms-2 shrink-0">
-                  {canUpdate && (
-                    <Link 
-                      href={`/admin/categories/${cat.id}/edit` as any}
-                      className="p-2.5 text-custom-blue/40 dark:text-custom-celadon/50 hover:text-custom-blue dark:hover:text-custom-celadon hover:bg-white dark:hover:bg-white/10 rounded-xl transition-all shadow-sm"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Link>
-                  )}
-                  {canDelete && <DeleteCategoryButton id={cat.id} />}
-                </div>
+          <Card key={cat.id} roundness="4xl" className="transition-all hover:translate-y-[-4px] hover:shadow-2xl">
+            <CardHeader className="mb-0 pb-0 flex justify-end">
+              <div className="flex items-center gap-1">
+                {canUpdate && (
+                  <Link 
+                    href={`/admin/categories/${cat.id}/edit` as any}
+                    className="p-2.5 text-custom-blue/40 dark:text-custom-celadon/50 hover:text-custom-blue dark:hover:text-custom-celadon hover:bg-custom-blue/5 dark:hover:bg-white/10 rounded-xl transition-all shadow-sm"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Link>
+                )}
+                {canDelete && <DeleteCategoryButton id={cat.id} />}
               </div>
             </CardHeader>
 
-            <CardBody className="pt-6 pb-2 space-y-4">
-              <div className="flex items-center gap-2 text-custom-blue/80 dark:text-custom-almond/80">
-                <BookOpen className="h-4 w-4 text-custom-blue/50 dark:text-custom-celadon/50 shrink-0" />
-                <span className="text-sm font-semibold font-josefin truncate">
-                  {cat._count.posts} {cat._count.posts === 1 ? 'Post' : 'Posts'} associated
-                </span>
+            <CardBody className="pt-2 pb-2 space-y-6">
+              <div className="flex flex-col items-start gap-4 min-w-0">
+                <div className="min-w-0 w-full">
+                  <h3 className="text-3xl font-kugile text-custom-blue dark:text-custom-celadon leading-snug truncate" title={cat.name}>
+                    {cat.name}
+                  </h3>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-custom-blue/80 dark:text-custom-almond/80">
-                <HelpCircle className="h-4 w-4 text-custom-blue/50 dark:text-custom-celadon/50 shrink-0" />
-                <span className="text-sm font-semibold font-josefin truncate">
-                  {cat._count.faqs} {cat._count.faqs === 1 ? 'FAQ' : 'FAQs'} associated
-                </span>
+
+              <div className="space-y-3 py-2">
+                <div className="flex items-center gap-2 text-custom-blue/80 dark:text-custom-almond/80">
+                  <BookOpen className="h-4 w-4 text-custom-blue/50 dark:text-custom-celadon/50 shrink-0" />
+                  <span className="text-sm font-semibold font-josefin truncate">
+                    {cat._count.posts} {cat._count.posts === 1 ? 'Post' : 'Posts'} associated
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-custom-blue/80 dark:text-custom-almond/80">
+                  <HelpCircle className="h-4 w-4 text-custom-blue/50 dark:text-custom-celadon/50 shrink-0" />
+                  <span className="text-sm font-semibold font-josefin truncate">
+                    {cat._count.faqs} {cat._count.faqs === 1 ? 'FAQ' : 'FAQs'} associated
+                  </span>
+                </div>
               </div>
             </CardBody>
 
-            <CardFooter hasBorder={true} className="pt-4 pb-2 border-t border-custom-blue/10 dark:border-white/10 flex items-center justify-between">
-              <span className="text-[9px] text-custom-blue/30 dark:text-custom-celadon/30 font-mono font-bold tracking-wider">
-                ID: {cat.id}
-              </span>
+            <CardFooter hasBorder={true} className="pt-4 pb-2 border-t border-custom-blue/10 dark:border-white/10 flex items-center justify-end">
               <span className="text-[9px] text-custom-blue/30 dark:text-custom-celadon/30 font-mono font-bold tracking-wider flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
                 {new Date(cat.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
