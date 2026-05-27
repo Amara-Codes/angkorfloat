@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import { Link } from "@/i18n/routing";
-import { Edit, Tag, BookOpen, Calendar } from "lucide-react";
+import { Edit, Tag, BookOpen, Calendar, HelpCircle } from "lucide-react";
 import DeleteCategoryButton from "@/components/admin/category/DeleteCategoryButton";
 import { hasPermission, protectPage } from "@/lib/rbac";
 import { Card, CardHeader, CardBody, CardFooter } from "@/components/common/Card";
@@ -14,7 +14,7 @@ export default async function CategoryListPage() {
   const categories = await prisma.postCategory.findMany({
     include: {
       _count: {
-        select: { posts: true }
+        select: { posts: true, faqs: true }
       }
     },
     orderBy: { name: "asc" },
@@ -27,7 +27,7 @@ export default async function CategoryListPage() {
   return (
     <div className="space-y-8 transition-colors duration-300">
       <TabHeading
-        title="Post Categories"
+        title="Categories"
         buttonHref="/admin/categories/new"
         buttonLabel="Add Category"
         showButton={canCreate}
@@ -38,18 +38,18 @@ export default async function CategoryListPage() {
           <Card key={cat.id} roundness="4xl" className="p-6 transition-all hover:translate-y-[-4px] hover:shadow-2xl">
             <CardHeader className="mb-0 pb-0">
               <div className="flex items-start justify-between w-full relative">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-custom-blue/5 dark:bg-custom-celadon/10 rounded-xl">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="p-2.5 bg-custom-blue/5 dark:bg-custom-celadon/10 rounded-xl shrink-0">
                     <Tag className="h-6 w-6 text-custom-blue dark:text-custom-celadon" />
                   </div>
-                  <div>
-                    <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon leading-snug">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-2xl font-kugile text-custom-blue dark:text-custom-celadon leading-snug truncate" title={cat.name}>
                       {cat.name}
                     </h3>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 border-l border-custom-blue/10 dark:border-white/10 ps-2 ms-2">
+                <div className="flex items-center gap-1 border-l border-custom-blue/10 dark:border-white/10 ps-2 ms-2 shrink-0">
                   {canUpdate && (
                     <Link 
                       href={`/admin/categories/${cat.id}/edit` as any}
@@ -65,9 +65,15 @@ export default async function CategoryListPage() {
 
             <CardBody className="pt-6 pb-2 space-y-4">
               <div className="flex items-center gap-2 text-custom-blue/80 dark:text-custom-almond/80">
-                <BookOpen className="h-4 w-4 text-custom-blue/50 dark:text-custom-celadon/50" />
-                <span className="text-sm font-semibold font-josefin">
+                <BookOpen className="h-4 w-4 text-custom-blue/50 dark:text-custom-celadon/50 shrink-0" />
+                <span className="text-sm font-semibold font-josefin truncate">
                   {cat._count.posts} {cat._count.posts === 1 ? 'Post' : 'Posts'} associated
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-custom-blue/80 dark:text-custom-almond/80">
+                <HelpCircle className="h-4 w-4 text-custom-blue/50 dark:text-custom-celadon/50 shrink-0" />
+                <span className="text-sm font-semibold font-josefin truncate">
+                  {cat._count.faqs} {cat._count.faqs === 1 ? 'FAQ' : 'FAQs'} associated
                 </span>
               </div>
             </CardBody>
